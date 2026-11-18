@@ -1,0 +1,550 @@
+{
+  "color": {
+    "light": {
+      "bg": {
+        "$type": "color",
+        "$value": "#F2F5F4",
+        "$description": "app/window background (canvas)"
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$description": "cards, list groups, inputs"
+      },
+      "surfaceRaised": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$description": "menus, popovers, dialogs (solid fallback for glass)"
+      },
+      "fill": {
+        "$type": "color",
+        "$value": "#E8EEEC",
+        "$description": "secondary buttons, chips, hover rows, skeletons"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "#DDE4E2",
+        "$description": "hairlines, card outlines, dividers"
+      },
+      "borderStrong": {
+        "$type": "color",
+        "$value": "#C4CFCC",
+        "$description": "input outlines"
+      },
+      "textPrimary": {
+        "$type": "color",
+        "$value": "#0B1513",
+        "$description": "titles, body text"
+      },
+      "textSecondary": {
+        "$type": "color",
+        "$value": "#4A5754",
+        "$description": "subtitles, descriptions, labels"
+      },
+      "textTertiary": {
+        "$type": "color",
+        "$value": "#5F6D6A",
+        "$description": "placeholders, timestamps, captions"
+      },
+      "textOnAccent": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$description": "text/icons on accent fill (dark mode: bright accent + dark text)"
+      },
+      "textOnDanger": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$description": "text/icons on dangerFill"
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "#0E8577",
+        "$description": "primary buttons, selected states, active tab, toggles, progress"
+      },
+      "accentHover": {
+        "$type": "color",
+        "$value": "#0F766E",
+        "$description": "hover/pressed accent fill"
+      },
+      "accentSubtle": {
+        "$type": "color",
+        "$value": "#E3F7F3",
+        "$description": "selected row, accent badge, icon boxes, info banners"
+      },
+      "accentText": {
+        "$type": "color",
+        "$value": "#0B6E64",
+        "$description": "links, accent text/icons on surfaces"
+      },
+      "focusRing": {
+        "$type": "color",
+        "$value": "#14B8A6",
+        "$description": "2px focus outline with 2px offset"
+      },
+      "success": {
+        "$type": "color",
+        "$value": "#15803D",
+        "$description": "positive amounts, success icons/text"
+      },
+      "successSubtle": {
+        "$type": "color",
+        "$value": "#ECFDF3",
+        "$description": "success banner/badge bg"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "#B54708",
+        "$description": "warning icons/text"
+      },
+      "warningSubtle": {
+        "$type": "color",
+        "$value": "#FFFAEB",
+        "$description": "warning banner/badge bg"
+      },
+      "danger": {
+        "$type": "color",
+        "$value": "#B42318",
+        "$description": "errors, destructive text/icons"
+      },
+      "dangerFill": {
+        "$type": "color",
+        "$value": "#D92D20",
+        "$description": "destructive button fill (white text)"
+      },
+      "dangerSubtle": {
+        "$type": "color",
+        "$value": "#FEF3F2",
+        "$description": "error banner/badge bg"
+      },
+      "overlay": {
+        "$type": "color",
+        "$value": "#0B151366",
+        "$description": "scrim behind modals/sheets"
+      },
+      "glass": {
+        "$type": "color",
+        "$value": "#FFFFFF73",
+        "$description": "Liquid Glass body tint (web) — see glass tokens"
+      },
+      "glassStrong": {
+        "$type": "color",
+        "$value": "#FFFFFFC7",
+        "$description": "glass for large panels (dialogs, menus) — more opaque for legibility"
+      },
+      "glassHighlight": {
+        "$type": "color",
+        "$value": "#FFFFFFE6",
+        "$description": "specular rim highlight (top-left light)"
+      },
+      "glassEdge": {
+        "$type": "color",
+        "$value": "#0B15131F",
+        "$description": "darkened outer edge (iOS 27)"
+      }
+    },
+    "dark": {
+      "bg": {
+        "$type": "color",
+        "$value": "#050807",
+        "$description": "app/window background (canvas)"
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "#121816",
+        "$description": "cards, list groups, inputs"
+      },
+      "surfaceRaised": {
+        "$type": "color",
+        "$value": "#1A2220",
+        "$description": "menus, popovers, dialogs (solid fallback for glass)"
+      },
+      "fill": {
+        "$type": "color",
+        "$value": "#1F2826",
+        "$description": "secondary buttons, chips, hover rows, skeletons"
+      },
+      "border": {
+        "$type": "color",
+        "$value": "#26302E",
+        "$description": "hairlines, card outlines, dividers"
+      },
+      "borderStrong": {
+        "$type": "color",
+        "$value": "#36423F",
+        "$description": "input outlines"
+      },
+      "textPrimary": {
+        "$type": "color",
+        "$value": "#F2F7F5",
+        "$description": "titles, body text"
+      },
+      "textSecondary": {
+        "$type": "color",
+        "$value": "#A5B1AE",
+        "$description": "subtitles, descriptions, labels"
+      },
+      "textTertiary": {
+        "$type": "color",
+        "$value": "#808C89",
+        "$description": "placeholders, timestamps, captions"
+      },
+      "textOnAccent": {
+        "$type": "color",
+        "$value": "#03241F",
+        "$description": "text/icons on accent fill (dark mode: bright accent + dark text)"
+      },
+      "textOnDanger": {
+        "$type": "color",
+        "$value": "#FFFFFF",
+        "$description": "text/icons on dangerFill"
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "#2DD4BF",
+        "$description": "primary buttons, selected states, active tab, toggles, progress"
+      },
+      "accentHover": {
+        "$type": "color",
+        "$value": "#5EEAD4",
+        "$description": "hover/pressed accent fill"
+      },
+      "accentSubtle": {
+        "$type": "color",
+        "$value": "#0B2A26",
+        "$description": "selected row, accent badge, icon boxes, info banners"
+      },
+      "accentText": {
+        "$type": "color",
+        "$value": "#5EEAD4",
+        "$description": "links, accent text/icons on surfaces"
+      },
+      "focusRing": {
+        "$type": "color",
+        "$value": "#2DD4BF",
+        "$description": "2px focus outline with 2px offset"
+      },
+      "success": {
+        "$type": "color",
+        "$value": "#4ADE80",
+        "$description": "positive amounts, success icons/text"
+      },
+      "successSubtle": {
+        "$type": "color",
+        "$value": "#06281A",
+        "$description": "success banner/badge bg"
+      },
+      "warning": {
+        "$type": "color",
+        "$value": "#FDB022",
+        "$description": "warning icons/text"
+      },
+      "warningSubtle": {
+        "$type": "color",
+        "$value": "#3B1D04",
+        "$description": "warning banner/badge bg"
+      },
+      "danger": {
+        "$type": "color",
+        "$value": "#F97066",
+        "$description": "errors, destructive text/icons"
+      },
+      "dangerFill": {
+        "$type": "color",
+        "$value": "#D92D20",
+        "$description": "destructive button fill (white text)"
+      },
+      "dangerSubtle": {
+        "$type": "color",
+        "$value": "#3D0F0B",
+        "$description": "error banner/badge bg"
+      },
+      "overlay": {
+        "$type": "color",
+        "$value": "#00000099",
+        "$description": "scrim behind modals/sheets"
+      },
+      "glass": {
+        "$type": "color",
+        "$value": "#28323073",
+        "$description": "Liquid Glass body tint (web) — see glass tokens"
+      },
+      "glassStrong": {
+        "$type": "color",
+        "$value": "#1A2220C7",
+        "$description": "glass for large panels (dialogs, menus) — more opaque for legibility"
+      },
+      "glassHighlight": {
+        "$type": "color",
+        "$value": "#FFFFFF40",
+        "$description": "specular rim highlight (top-left light)"
+      },
+      "glassEdge": {
+        "$type": "color",
+        "$value": "#00000080",
+        "$description": "darkened outer edge (iOS 27)"
+      }
+    }
+  },
+  "space": {
+    "0": {
+      "$type": "dimension",
+      "$value": "0px"
+    },
+    "xxs": {
+      "$type": "dimension",
+      "$value": "2px"
+    },
+    "xs": {
+      "$type": "dimension",
+      "$value": "4px"
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "8px"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "12px"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "16px"
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "24px"
+    },
+    "2xl": {
+      "$type": "dimension",
+      "$value": "32px"
+    },
+    "3xl": {
+      "$type": "dimension",
+      "$value": "48px"
+    },
+    "4xl": {
+      "$type": "dimension",
+      "$value": "64px"
+    }
+  },
+  "radius": {
+    "xs": {
+      "$type": "dimension",
+      "$value": "4px"
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "8px"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "12px"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "20px"
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "28px"
+    },
+    "full": {
+      "$type": "dimension",
+      "$value": "9999px"
+    }
+  },
+  "size": {
+    "controlSm": {
+      "$type": "dimension",
+      "$value": "32px"
+    },
+    "controlMd": {
+      "$type": "dimension",
+      "$value": "44px"
+    },
+    "controlLg": {
+      "$type": "dimension",
+      "$value": "52px"
+    },
+    "controlCompact": {
+      "$type": "dimension",
+      "$value": "28px"
+    },
+    "minTouchApple": {
+      "$type": "dimension",
+      "$value": "44px"
+    },
+    "minTouchAndroid": {
+      "$type": "dimension",
+      "$value": "48px"
+    },
+    "iconSm": {
+      "$type": "dimension",
+      "$value": "16px"
+    },
+    "iconMd": {
+      "$type": "dimension",
+      "$value": "20px"
+    },
+    "iconLg": {
+      "$type": "dimension",
+      "$value": "24px"
+    },
+    "avatarSm": {
+      "$type": "dimension",
+      "$value": "32px"
+    },
+    "avatarMd": {
+      "$type": "dimension",
+      "$value": "40px"
+    },
+    "avatarLg": {
+      "$type": "dimension",
+      "$value": "56px"
+    },
+    "listRow": {
+      "$type": "dimension",
+      "$value": "56px"
+    },
+    "listRowCompact": {
+      "$type": "dimension",
+      "$value": "36px"
+    },
+    "navBarWeb": {
+      "$type": "dimension",
+      "$value": "64px"
+    },
+    "sidebarWeb": {
+      "$type": "dimension",
+      "$value": "248px"
+    },
+    "sidebarMac": {
+      "$type": "dimension",
+      "$value": "220px"
+    },
+    "containerMax": {
+      "$type": "dimension",
+      "$value": "1200px"
+    },
+    "readingMax": {
+      "$type": "dimension",
+      "$value": "680px"
+    }
+  },
+  "typography": {
+    "display": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "34px",
+        "lineHeight": "40px",
+        "fontWeight": 700,
+        "letterSpacing": "-0.4px"
+      }
+    },
+    "title1": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "28px",
+        "lineHeight": "34px",
+        "fontWeight": 700,
+        "letterSpacing": "-0.3px"
+      }
+    },
+    "title2": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "22px",
+        "lineHeight": "28px",
+        "fontWeight": 600,
+        "letterSpacing": "-0.2px"
+      }
+    },
+    "title3": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "20px",
+        "lineHeight": "26px",
+        "fontWeight": 600,
+        "letterSpacing": "-0.1px"
+      }
+    },
+    "headline": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "17px",
+        "lineHeight": "24px",
+        "fontWeight": 600,
+        "letterSpacing": "0px"
+      }
+    },
+    "body": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "16px",
+        "lineHeight": "24px",
+        "fontWeight": 400,
+        "letterSpacing": "0px"
+      }
+    },
+    "callout": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "15px",
+        "lineHeight": "22px",
+        "fontWeight": 400,
+        "letterSpacing": "0px"
+      }
+    },
+    "subheadline": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "14px",
+        "lineHeight": "20px",
+        "fontWeight": 500,
+        "letterSpacing": "0px"
+      }
+    },
+    "footnote": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "13px",
+        "lineHeight": "18px",
+        "fontWeight": 400,
+        "letterSpacing": "0px"
+      }
+    },
+    "caption": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Inter",
+        "fontSize": "12px",
+        "lineHeight": "16px",
+        "fontWeight": 500,
+        "letterSpacing": "0.2px"
+      }
+    }
+  },
+  "duration": {
+    "fast": {
+      "$type": "duration",
+      "$value": "120ms"
+    },
+    "base": {
+      "$type": "duration",
+      "$value": "200ms"
+    },
+    "slow": {
+      "$type": "duration",
+      "$value": "320ms"
+    }
+  }
+}

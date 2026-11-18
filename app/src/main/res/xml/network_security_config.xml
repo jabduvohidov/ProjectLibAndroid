@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The ProjectLib server may sit behind a private CA (https://project.lib, see DEPLOY-LAN.md in the web repo):
+  certificates the user installed in Android settings are trusted in addition to the system ones.
+  Plain http is allowed for a server on the local network / emulator (http://10.0.2.2:3001).
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

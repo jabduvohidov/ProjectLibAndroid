@@ -1,0 +1,8 @@
+<resources>
+    <!-- Only the window before Compose draws: the brand background, light or dark with the system. -->
+    <style name="Theme.ProjectLib" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

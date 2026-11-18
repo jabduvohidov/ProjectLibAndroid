@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Макет главной — Universal Design System</title>
+<style>
+/* Generated from tokens.json — do not edit by hand. */
+:root {
+  --color-bg: #F2F5F4;
+  --color-surface: #FFFFFF;
+  --color-surface-raised: #FFFFFF;
+  --color-fill: #E8EEEC;
+  --color-border: #DDE4E2;
+  --color-border-strong: #C4CFCC;
+  --color-text-primary: #0B1513;
+  --color-text-secondary: #4A5754;
+  --color-text-tertiary: #5F6D6A;
+  --color-text-on-accent: #FFFFFF;
+  --color-text-on-danger: #FFFFFF;
+  --color-accent: #0E8577;
+  --color-accent-hover: #0F766E;
+  --color-accent-subtle: #E3F7F3;
+  --color-accent-text: #0B6E64;
+  --color-focus-ring: #14B8A6;
+  --color-success: #15803D;
+  --color-success-subtle: #ECFDF3;
+  --color-warning: #B54708;
+  --color-warning-subtle: #FFFAEB;
+  --color-danger: #B42318;
+  --color-danger-fill: #D92D20;
+  --color-danger-subtle: #FEF3F2;
+  --color-overlay: #0B151366;
+  --color-glass: #FFFFFF73;
+  --color-glass-strong: #FFFFFFC7;
+  --color-glass-highlight: #FFFFFFE6;
+  --color-glass-edge: #0B15131F;
+  --space-0: 0px;
+  --space-xxs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+  --space-4xl: 64px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+  --text-display-size: 34px;
+  --text-display-line: 40px;
+  --text-display-weight: 700;
+  --text-display-tracking: -0.4px;
+  --text-title1-size: 28px;
+  --text-title1-line: 34px;
+  --text-title1-weight: 700;
+  --text-title1-tracking: -0.3px;
+  --text-title2-size: 22px;
+  --text-title2-line: 28px;
+  --text-title2-weight: 600;
+  --text-title2-tracking: -0.2px;
+  --text-title3-size: 20px;
+  --text-title3-line: 26px;
+  --text-title3-weight: 600;
+  --text-title3-tracking: -0.1px;
+  --text-headline-size: 17px;
+  --text-headline-line: 24px;
+  --text-headline-weight: 600;
+  --text-headline-tracking: 0px;
+  --text-body-size: 16px;
+  --text-body-line: 24px;
+  --text-body-weight: 400;
+  --text-body-tracking: 0px;
+  --text-callout-size: 15px;
+  --text-callout-line: 22px;
+  --text-callout-weight: 400;
+  --text-callout-tracking: 0px;
+  --text-subheadline-size: 14px;
+  --text-subheadline-line: 20px;
+  --text-subheadline-weight: 500;
+  --text-subheadline-tracking: 0px;
+  --text-footnote-size: 13px;
+  --text-footnote-line: 18px;
+  --text-footnote-weight: 400;
+  --text-footnote-tracking: 0px;
+  --text-caption-size: 12px;
+  --text-caption-line: 16px;
+  --text-caption-weight: 500;
+  --text-caption-tracking: 0.2px;
+  --size-control-sm: 32px;
+  --size-control-md: 44px;
+  --size-control-lg: 52px;
+  --size-control-compact: 28px;
+  --size-min-touch-apple: 44px;
+  --size-min-touch-android: 48px;
+  --size-icon-sm: 16px;
+  --size-icon-md: 20px;
+  --size-icon-lg: 24px;
+  --size-avatar-sm: 32px;
+  --size-avatar-md: 40px;
+  --size-avatar-lg: 56px;
+  --size-list-row: 56px;
+  --size-list-row-compact: 36px;
+  --size-nav-bar-web: 64px;
+  --size-sidebar-web: 248px;
+  --size-sidebar-mac: 220px;
+  --size-container-max: 1200px;
+  --size-reading-max: 680px;
+  --shadow-sm: 0 1px 2px #1018280D;
+  --shadow-md: 0 4px 12px #10182814;
+  --shadow-lg: 0 12px 32px #1018281F;
+  --easing-spring-standard: linear(0, 0.0151, 0.0543, 0.1101, 0.1766, 0.2488, 0.3233, 0.3972, 0.4687, 0.5363, 0.5991, 0.6566, 0.7086, 0.7551, 0.7961, 0.8321, 0.8632, 0.89, 0.9127, 0.9319, 0.9479, 0.9611, 0.9719, 0.9806, 0.9876, 0.993, 0.9972, 1.0004, 1.0027, 1.0043, 1.0053, 1.006, 1.0062, 1.0063, 1.0061, 1.0058, 1.0054, 1.005, 1.0045, 1.0041, 1.0036, 1.0032, 1.0028, 1.0024, 1);
+  --duration-spring-standard: 448ms;
+  --easing-spring-bouncy: linear(0, 0.0215, 0.0774, 0.1567, 0.2502, 0.3504, 0.4514, 0.549, 0.64, 0.7224, 0.795, 0.8574, 0.9096, 0.9522, 0.9857, 1.0113, 1.0299, 1.0424, 1.05, 1.0537, 1.0541, 1.0523, 1.0488, 1.0442, 1.039, 1.0335, 1.028, 1.0228, 1.018, 1.0137, 1.01, 1.0068, 1.0041, 1.002, 1.0003, 0.999, 0.9981, 0.9975, 0.9972, 0.9971, 0.9971, 0.9972, 0.9974, 0.9977, 1);
+  --duration-spring-bouncy: 610ms;
+  --press-glass-scale: 1.06;
+  --press-button-scale: 0.97;
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --font-sans: 'Inter Variable', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --color-bg: #050807;
+    --color-surface: #121816;
+    --color-surface-raised: #1A2220;
+    --color-fill: #1F2826;
+    --color-border: #26302E;
+    --color-border-strong: #36423F;
+    --color-text-primary: #F2F7F5;
+    --color-text-secondary: #A5B1AE;
+    --color-text-tertiary: #808C89;
+    --color-text-on-accent: #03241F;
+    --color-text-on-danger: #FFFFFF;
+    --color-accent: #2DD4BF;
+    --color-accent-hover: #5EEAD4;
+    --color-accent-subtle: #0B2A26;
+    --color-accent-text: #5EEAD4;
+    --color-focus-ring: #2DD4BF;
+    --color-success: #4ADE80;
+    --color-success-subtle: #06281A;
+    --color-warning: #FDB022;
+    --color-warning-subtle: #3B1D04;
+    --color-danger: #F97066;
+    --color-danger-fill: #D92D20;
+    --color-danger-subtle: #3D0F0B;
+    --color-overlay: #00000099;
+    --color-glass: #28323073;
+    --color-glass-strong: #1A2220C7;
+    --color-glass-highlight: #FFFFFF40;
+    --color-glass-edge: #00000080;
+    --shadow-sm: none;
+    --shadow-md: 0 0 0 1px var(--color-border);
+    --shadow-lg: 0 0 0 1px var(--color-border), 0 16px 40px #00000066;
+  }
+}
+
+:root.dark {
+  --color-bg: #050807;
+  --color-surface: #121816;
+  --color-surface-raised: #1A2220;
+  --color-fill: #1F2826;
+  --color-border: #26302E;
+  --color-border-strong: #36423F;
+  --color-text-primary: #F2F7F5;
+  --color-text-secondary: #A5B1AE;
+  --color-text-tertiary: #808C89;
+  --color-text-on-accent: #03241F;
+  --color-text-on-danger: #FFFFFF;
+  --color-accent: #2DD4BF;
+  --color-accent-hover: #5EEAD4;
+  --color-accent-subtle: #0B2A26;
+  --color-accent-text: #5EEAD4;
+  --color-focus-ring: #2DD4BF;
+  --color-success: #4ADE80;
+  --color-success-subtle: #06281A;
+  --color-warning: #FDB022;
+  --color-warning-subtle: #3B1D04;
+  --color-danger: #F97066;
+  --color-danger-fill: #D92D20;
+  --color-danger-subtle: #3D0F0B;
+  --color-overlay: #00000099;
+  --color-glass: #28323073;
+  --color-glass-strong: #1A2220C7;
+  --color-glass-highlight: #FFFFFF40;
+  --color-glass-edge: #00000080;
+  --shadow-sm: none;
+  --shadow-md: 0 0 0 1px var(--color-border);
+  --shadow-lg: 0 0 0 1px var(--color-border), 0 16px 40px #00000066;
+}
+
+/* Increased contrast (macOS/iOS 'Increase Contrast', Windows high contrast) */
+@media (prefers-contrast: more) {
+  :root {
+    --color-border: #98A4A1;
+    --color-border-strong: #647370;
+    --color-text-secondary: #36423F;
+    --color-text-tertiary: #4A5754;
+    --color-accent: #0B5E57;
+    --color-accent-text: #0B5E57;
+  }
+  :root.dark {
+    --color-border: #4A5754;
+    --color-border-strong: #647370;
+    --color-text-secondary: #C4CFCC;
+    --color-text-tertiary: #A5B1AE;
+    --color-accent: #5EEAD4;
+    --color-accent-text: #99E6D8;
+  }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --color-border: #4A5754;
+    --color-border-strong: #647370;
+    --color-text-secondary: #C4CFCC;
+    --color-text-tertiary: #A5B1AE;
+    --color-accent: #5EEAD4;
+    --color-accent-text: #99E6D8;
+  }
+}
+
+/* ============================================================================
+   Liquid Glass — web approximation of iOS / macOS 27.
+   Layers: backdrop blur+saturation (the "lens"), thin tinted body, top sheen,
+   specular rim (light from top-left), brighter bottom rim (refraction),
+   darkened outer edge (iOS 27), inner glow for thickness, soft depth shadow.
+   Use ONLY on the navigation/control layer. Content stays solid.
+   ============================================================================ */
+.glass, .glass-strong, .glass-tinted {
+  position: relative;
+  isolation: isolate;
+  -webkit-backdrop-filter: blur(14px) saturate(190%) brightness(1.04);
+  backdrop-filter: blur(14px) saturate(190%) brightness(1.04);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-glass-highlight) 22%, transparent) 0%, transparent 50%),
+    var(--color-glass);
+  box-shadow:
+    0 0 0 0.5px var(--color-glass-edge),
+    inset 0 1px 0.5px var(--color-glass-highlight),
+    inset 0 -1px 1px color-mix(in srgb, var(--color-glass-highlight) 40%, transparent),
+    inset 0 0 14px color-mix(in srgb, var(--color-glass-highlight) 18%, transparent),
+    0 10px 30px -8px #00000033,
+    0 2px 6px -2px #0000001F;
+  transition: transform var(--duration-base) var(--easing-standard), box-shadow var(--duration-base) var(--easing-standard);
+}
+/* Curved-glass lensing: a soft bright arc in the top-left, as if light bends through the edge. */
+.glass::before, .glass-strong::before, .glass-tinted::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(120% 80% at 15% -10%, color-mix(in srgb, var(--color-glass-highlight) 45%, transparent) 0%, transparent 55%),
+    radial-gradient(80% 60% at 100% 120%, color-mix(in srgb, var(--color-glass-highlight) 18%, transparent) 0%, transparent 60%);
+}
+.glass-strong { background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-glass-highlight) 18%, transparent) 0%, transparent 40%),
+    var(--color-glass-strong); }
+/* Prominent glass = the accent seen through glass (primary floating button, selected tab lens). */
+.glass-tinted {
+  color: var(--color-text-on-accent);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, #FFFFFF 28%, transparent) 0%, transparent 55%),
+    color-mix(in srgb, var(--color-accent) 88%, transparent);
+}
+/* Interactive glass (iOS 27): grows under the finger with a bouncy spring and a highlight blooms from the touch point.
+   Needs installGlassPress() from ds/motion.ts (sets .is-pressed and --px/--py). */
+.glass-interactive {
+  transition: transform var(--duration-spring-bouncy) var(--easing-spring-bouncy), box-shadow var(--duration-base) var(--easing-standard);
+  -webkit-tap-highlight-color: transparent;
+}
+.glass-interactive::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 260ms ease-out;
+  background: radial-gradient(circle at var(--px, 50%) var(--py, 50%), color-mix(in srgb, var(--color-glass-highlight) 75%, transparent) 0%, transparent 65%);
+  mix-blend-mode: soft-light;
+}
+.glass-interactive.is-pressed { transform: scale(var(--press-glass-scale)); transition-duration: 160ms, var(--duration-base); }
+.glass-interactive.is-pressed::after { opacity: 1; transition-duration: 80ms; }
+.glass-interactive:hover { box-shadow:
+    0 0 0 0.5px var(--color-glass-edge),
+    inset 0 1px 0.5px var(--color-glass-highlight),
+    inset 0 -1px 1px color-mix(in srgb, var(--color-glass-highlight) 50%, transparent),
+    inset 0 0 18px color-mix(in srgb, var(--color-glass-highlight) 26%, transparent),
+    0 14px 36px -8px #0000003D,
+    0 2px 6px -2px #0000001F; }
+
+/* Glass materializing (appearing out of a neighbour / the screen): scale + de-blur with the bouncy spring. */
+@keyframes glass-materialize {
+  from { opacity: 0; transform: scale(0.6); filter: blur(6px); }
+  to   { opacity: 1; transform: scale(1);   filter: blur(0); }
+}
+.glass-materialize { animation: glass-materialize var(--duration-spring-bouncy) var(--easing-spring-bouncy) both; }
+
+/* Scroll edge effect: content softly dissolves under the floating top/bottom controls (no solid bar). */
+.scroll-edge-top { isolation: isolate; }
+.scroll-edge-top::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 -28px 0;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  background: linear-gradient(to bottom, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 75%, transparent) 55%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent);
+}
+.scroll-edge-bottom {
+  position: fixed; left: 0; right: 0; bottom: 0; height: calc(110px + env(safe-area-inset-bottom));
+  pointer-events: none; z-index: 15;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  background: linear-gradient(to top, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 60%, transparent) 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 45%, transparent);
+  mask-image: linear-gradient(to top, #000 45%, transparent);
+}
+
+/* Ambient canvas: a faint accent wash so glass has something to refract. Opt-in on <body class="ambient">. */
+.ambient {
+  background:
+    radial-gradient(60% 45% at 0% 0%, color-mix(in srgb, var(--color-accent) 12%, transparent), transparent 70%),
+    radial-gradient(55% 40% at 100% 15%, color-mix(in srgb, var(--color-success) 8%, transparent), transparent 70%),
+    var(--color-bg);
+  background-attachment: fixed;
+}
+
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .glass, .glass-strong { background: var(--color-surface-raised); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: 0 0 0 1px var(--color-border), 0 8px 24px -8px #00000033; }
+  .glass-tinted { background: var(--color-accent); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .glass::before, .glass-strong::before, .glass-tinted::before { display: none; }
+  .scroll-edge-top::before, .scroll-edge-bottom { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--color-bg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass-interactive.is-pressed { transform: none; }
+  .glass-materialize { animation: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; }
+}
+
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, "Segoe UI", Roboto, sans-serif;
+  background: var(--color-bg); color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased; min-height: 100vh;
+}
+.page-bg {
+  background:
+    radial-gradient(60% 50% at 0% 0%, color-mix(in srgb, var(--color-accent) 14%, transparent), transparent 70%),
+    radial-gradient(50% 40% at 100% 100%, color-mix(in srgb, var(--color-success) 10%, transparent), transparent 70%),
+    var(--color-bg);
+  min-height: 100vh; padding: 32px 24px 64px;
+}
+.top { max-width: 1320px; margin: 0 auto 28px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; }
+.top h1 { font-size: 28px; line-height: 34px; letter-spacing: -0.3px; }
+.top p { color: var(--color-text-secondary); font-size: 15px; margin-top: 4px; max-width: 640px; }
+.seg { display: inline-grid; grid-auto-flow: column; gap: 2px; padding: 3px; border-radius: 999px; background: var(--color-fill); }
+.seg button { border: 0; background: transparent; color: var(--color-text-secondary); font: 600 14px/1 inherit; font-family: inherit; height: 36px; padding: 0 16px; border-radius: 999px; cursor: pointer; }
+.seg button.on { background: var(--color-surface-raised); color: var(--color-text-primary); box-shadow: 0 0 0 1px var(--color-border), 0 1px 2px #0000001a; }
+
+.phones { max-width: 1320px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 36px; justify-content: center; }
+.col { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.cap { text-align: center; max-width: 360px; }
+.cap b { display: block; font-size: 17px; }
+.cap span { color: var(--color-text-secondary); font-size: 13px; line-height: 18px; }
+
+/* ---------- device frames ---------- */
+.device { width: 390px; height: 844px; border-radius: 56px; padding: 12px; background: #0b0f0e; box-shadow: 0 0 0 2px #2a3331, 0 30px 80px -20px #00000066; position: relative; flex: none; }
+.device.android { border-radius: 40px; padding: 10px; }
+.screen { width: 100%; height: 100%; border-radius: 44px; overflow: hidden; position: relative; background: var(--color-bg); }
+.android .screen { border-radius: 32px; }
+.scroll { position: absolute; inset: 0; overflow-y: auto; scrollbar-width: none; }
+.scroll::-webkit-scrollbar { display: none; }
+.island { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 122px; height: 35px; border-radius: 20px; background: #000; z-index: 50; }
+.punch { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 14px; height: 14px; border-radius: 50%; background: #000; z-index: 50; }
+.status { position: absolute; top: 0; left: 0; right: 0; height: 54px; display: flex; align-items: center; justify-content: space-between; padding: 6px 32px 0 40px; font-weight: 600; font-size: 16px; z-index: 40; pointer-events: none; }
+.android .status { height: 40px; padding: 4px 22px 0 26px; font-size: 14px; font-weight: 500; }
+.status .r { display: flex; gap: 6px; align-items: center; }
+.home-ind { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 136px; height: 5px; border-radius: 3px; background: var(--color-text-primary); opacity: .85; z-index: 60; }
+.android .home-ind { width: 108px; height: 4px; bottom: 6px; }
+
+svg.i { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ---------- shared content ---------- */
+.content { padding: 0 16px 140px; }
+.large-title { font-size: 34px; line-height: 40px; font-weight: 700; letter-spacing: -0.4px; }
+.sub { color: var(--color-text-secondary); font-size: 15px; }
+.bank-card {
+  position: relative; overflow: hidden; border-radius: 24px; padding: 20px; color: #fff; min-height: 196px;
+  background: linear-gradient(135deg, #0B5E57 0%, #0E8577 38%, #14B8A6 72%, #5EEAD4 100%);
+  box-shadow: 0 16px 40px -18px #0B5E57AA;
+}
+.bank-card .blob1 { position: absolute; right: -70px; top: -90px; width: 260px; height: 260px; border-radius: 50%; background: #ffffff26; filter: blur(30px); }
+.bank-card .blob2 { position: absolute; left: 30%; bottom: -100px; width: 220px; height: 220px; border-radius: 50%; background: #4ADE8040; filter: blur(30px); }
+.bank-card > * { position: relative; }
+.bc-top { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 17px; }
+.bc-label { margin-top: 30px; font-size: 13px; opacity: .85; display: flex; align-items: center; gap: 6px; }
+.bc-amount { font-size: 34px; line-height: 40px; font-weight: 700; letter-spacing: -0.4px; font-variant-numeric: tabular-nums; }
+.bc-amount small { font-size: 20px; font-weight: 600; opacity: .85; }
+.bc-bottom { margin-top: 10px; display: flex; justify-content: space-between; font-size: 14px; opacity: .9; font-variant-numeric: tabular-nums; }
+
+.actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 16px; }
+.action { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+.action .ib { width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; background: var(--color-surface); color: var(--color-accent-text); box-shadow: 0 0 0 1px var(--color-border); }
+.android .action .ib { border-radius: 20px; background: var(--color-accent-subtle); box-shadow: none; }
+
+.sec-h { display: flex; justify-content: space-between; align-items: baseline; margin: 26px 4px 8px; }
+.sec-h h3 { font-size: 14px; font-weight: 500; color: var(--color-text-secondary); }
+.sec-h a { font-size: 14px; color: var(--color-accent-text); text-decoration: none; font-weight: 500; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat { background: var(--color-surface); border-radius: 20px; padding: 14px 16px; box-shadow: 0 0 0 1px var(--color-border); }
+.stat p { font-size: 13px; color: var(--color-text-secondary); }
+.stat b { display: block; font-size: 22px; line-height: 28px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.stat .badge { display: inline-flex; margin-top: 6px; height: 22px; align-items: center; padding: 0 8px; border-radius: 999px; font-size: 12px; font-weight: 500; }
+.b-succ { background: var(--color-success-subtle); color: var(--color-success); }
+.b-neu { background: var(--color-fill); color: var(--color-text-secondary); }
+.bar { height: 6px; border-radius: 999px; background: var(--color-fill); margin-top: 10px; overflow: hidden; }
+.bar i { display: block; height: 100%; width: 62%; border-radius: 999px; background: var(--color-accent); }
+
+.group { background: var(--color-surface); border-radius: 20px; box-shadow: 0 0 0 1px var(--color-border); overflow: hidden; }
+.row { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 10px 16px; position: relative; }
+.row + .row::before { content: ""; position: absolute; top: 0; left: 64px; right: 0; height: 1px; background: var(--color-border); }
+.row .ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--color-accent-subtle); color: var(--color-accent-text); }
+.row .ico.n { background: var(--color-fill); color: var(--color-text-secondary); }
+.row .t { flex: 1; min-width: 0; }
+.row .t b { display: block; font-weight: 400; font-size: 16px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .t span { font-size: 13px; color: var(--color-text-secondary); }
+.row .v { font-size: 16px; font-variant-numeric: tabular-nums; font-weight: 500; white-space: nowrap; }
+.row .v.plus { color: var(--color-success); }
+.promo { margin-top: 10px; border-radius: 20px; padding: 16px; display: flex; gap: 12px; align-items: center; background: var(--color-accent-subtle); }
+.promo b { font-size: 15px; display: block; }
+.promo span { font-size: 13px; color: var(--color-text-secondary); }
+
+/* ---------- iOS 27 chrome ---------- */
+.edge-top { opacity: 0; transition: opacity .2s; }
+.ios-top.scrolled .edge-top { opacity: 1; }
+.ios-top { position: absolute; top: 0; left: 0; right: 0; height: 120px; z-index: 30; pointer-events: none; }
+.edge-top { position: absolute; inset: 0; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  background: linear-gradient(to bottom, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 70%, transparent) 55%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+.ios-btns { position: absolute; top: 58px; right: 16px; display: flex; gap: 10px; pointer-events: auto; }
+.gbtn { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: var(--color-text-primary); font-weight: 600; font-size: 15px; cursor: pointer; border: 0; }
+.gbtn.av { color: var(--color-accent-text); }
+.edge-bottom { position: absolute; left: 0; right: 0; bottom: 0; height: 150px; z-index: 30; pointer-events: none; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  background: linear-gradient(to top, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 55%, transparent) 45%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 40%, transparent); mask-image: linear-gradient(to top, #000 40%, transparent); }
+.tabwrap { position: absolute; left: 16px; right: 16px; bottom: 26px; z-index: 35; display: flex; align-items: flex-end; justify-content: space-between; }
+.android .tabwrap { left: 14px; right: 14px; bottom: 22px; }
+.tabbar { flex: none; width: calc(100% - 72px); height: 62px; border-radius: 999px; position: relative; overflow: hidden;
+  transition: width var(--duration-spring-standard) var(--easing-spring-standard), transform var(--duration-spring-bouncy) var(--easing-spring-bouncy), box-shadow var(--duration-base); }
+.tabbar .lens { position: absolute; top: 5px; bottom: 5px; left: 5px; width: var(--col); border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text-primary) 9%, transparent);
+  transform: translateX(calc(var(--idx) * var(--col)));
+  transition: transform var(--duration-spring-standard) var(--easing-spring-standard), opacity var(--duration-base); }
+.tabbar .tabs { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc(var(--col) * 4); display: grid; grid-template-columns: repeat(4, 1fr);
+  transition: transform var(--duration-spring-standard) var(--easing-spring-standard); }
+.tab { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 10px; font-weight: 600; color: var(--color-text-primary); background: none; border: 0; cursor: pointer; font-family: inherit; border-radius: 999px; transition: color var(--duration-fast), opacity var(--duration-base); }
+.android .tab { font-size: 11px; font-family: Roboto, Inter, sans-serif; }
+.tab span { transition: opacity var(--duration-fast); }
+.tab.on { color: var(--color-accent-text); }
+.tab svg.i { width: 24px; height: 24px; }
+.searchbtn { width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; color: var(--color-text-primary); border: 0; cursor: pointer; }
+.searchbtn svg.i { width: 24px; height: 24px; }
+.tabbar.min { width: 62px; }
+.tabbar.min .lens { opacity: 0; }
+.tabbar.min .tabs { transform: translateX(calc(var(--idx) * var(--col) * -1 - (var(--col) - 52px) / 2)); }
+.tabbar.min .tab:not(.on) { opacity: 0; pointer-events: none; }
+.tabbar.min .tab span { opacity: 0; }
+
+/* glass FAB → menu morph */
+.morph { position: absolute; right: 16px; bottom: 104px; z-index: 36; width: 60px; height: 60px; border-radius: 30px; overflow: hidden; cursor: pointer;
+  transition: width var(--duration-spring-standard) var(--easing-spring-standard), height var(--duration-spring-standard) var(--easing-spring-standard), transform var(--duration-spring-bouncy) var(--easing-spring-bouncy), background var(--duration-base); }
+.android .morph { right: 14px; bottom: 100px; }
+.morph.open { width: 210px; height: 232px; cursor: default; }
+.morph ul { list-style: none; padding: 6px; display: none; }
+.morph.open ul { display: block; }
+.morph li button { width: 100%; height: 52px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border: 0; background: none; border-radius: 999px; font: 600 15px/1 inherit; font-family: inherit; color: var(--color-text-primary); cursor: pointer; text-align: left; }
+.morph li button:hover { background: color-mix(in srgb, var(--color-text-primary) 7%, transparent); }
+.morph li svg.i { color: var(--color-accent-text); width: 20px; height: 20px; }
+.morph .toggle { position: absolute; right: 0; bottom: 0; width: 60px; height: 60px; display: grid; place-items: center; border: 0; background: none; color: var(--color-text-on-accent); cursor: pointer; }
+.morph.open .toggle { color: var(--color-text-primary); }
+.morph .toggle svg.i { width: 26px; height: 26px; stroke-width: 2.2; transition: transform var(--duration-spring-standard) var(--easing-spring-standard); }
+.morph.open .toggle svg.i { transform: rotate(45deg); }
+
+/* sheet that grows out of a button (container transform) */
+.scrim { position: absolute; inset: 0; z-index: 44; background: var(--color-overlay); opacity: 0; pointer-events: none; transition: opacity var(--duration-base); }
+.scrim.on { opacity: 1; pointer-events: auto; }
+.sheet { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 45; border-radius: 36px; padding: 14px 20px 24px; display: none; }
+.android .sheet { border-radius: 28px; }
+.sheet.on { display: block; }
+.sheet .grab { width: 36px; height: 5px; border-radius: 3px; background: var(--color-border-strong); margin: 0 auto 14px; }
+.sheet h4 { font-size: 22px; line-height: 28px; font-weight: 600; }
+.sheet p { color: var(--color-text-secondary); font-size: 15px; margin-top: 4px; }
+.sheet label { display: block; font-size: 14px; font-weight: 500; color: var(--color-text-secondary); margin: 16px 0 8px; }
+.sheet .fld { height: 48px; border-radius: 12px; background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-border-strong); display: flex; align-items: center; padding: 0 14px; gap: 8px; font-size: 17px; font-variant-numeric: tabular-nums; }
+.sheet .fld span { color: var(--color-text-secondary); }
+.sheet .cta { margin-top: 22px; width: 100%; height: 52px; border: 0; border-radius: 999px; background: var(--color-accent); color: var(--color-text-on-accent); font: 600 17px/1 inherit; font-family: inherit; cursor: pointer; transition: transform 120ms; }
+.sheet .cta:active, .action:active .ib { transform: scale(var(--press-button-scale)); }
+.sheet .cancel { margin-top: 8px; width: 100%; height: 44px; border: 0; background: none; color: var(--color-accent-text); font: 600 15px/1 inherit; font-family: inherit; cursor: pointer; }
+.action { cursor: pointer; }
+.action .ib { transition: transform 120ms; }
+
+/* reduce motion demo switch */
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+.reduce-motion .glass-interactive.is-pressed { transform: none; }
+.switch { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; color: var(--color-text-secondary); cursor: pointer; user-select: none; }
+.switch i { width: 48px; height: 28px; border-radius: 999px; background: var(--color-border-strong); position: relative; transition: background var(--duration-base); }
+.switch i::after { content: ""; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px #0003; transition: transform var(--duration-spring-bouncy) var(--easing-spring-bouncy); }
+.switch.on i { background: var(--color-accent); }
+.switch.on i::after { transform: translateX(20px); }
+.tryit { max-width: 1320px; margin: 0 auto 22px; display: flex; flex-wrap: wrap; gap: 8px; }
+.tryit span { font-size: 13px; padding: 7px 12px; border-radius: 999px; background: var(--color-accent-subtle); color: var(--color-accent-text); font-weight: 500; }
+.m-tab { cursor: pointer; }
+.m-tab .pill { transition: background var(--duration-base), width var(--duration-spring-standard) var(--easing-spring-standard); }
+.m-nav .m-tab:not(.on) .pill { width: 32px; }
+
+/* ---------- Android (Material 3) chrome ---------- */
+.m-top { position: sticky; top: 0; z-index: 20; padding: 48px 16px 8px; background: var(--color-bg); display: flex; align-items: center; justify-content: space-between; transition: box-shadow .2s; }
+.m-top.scrolled { background: color-mix(in srgb, var(--color-fill) 70%, var(--color-bg)); }
+.m-top .lt { font-size: 28px; line-height: 36px; font-weight: 500; letter-spacing: 0; font-family: Roboto, "Google Sans", Inter, sans-serif; }
+.m-top .acts { display: flex; gap: 4px; align-items: center; }
+.m-icon { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: var(--color-text-primary); }
+.m-avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--color-accent-subtle); color: var(--color-accent-text); font-weight: 600; font-size: 14px; margin-left: 4px; }
+.android .content { font-family: Roboto, "Google Sans", Inter, sans-serif; }
+.android .bank-card { border-radius: 28px; }
+.m-nav { position: absolute; left: 0; right: 0; bottom: 0; height: 92px; padding: 12px 8px 22px; background: color-mix(in srgb, var(--color-fill) 60%, var(--color-surface)); display: grid; grid-template-columns: repeat(4, 1fr); z-index: 30; font-family: Roboto, Inter, sans-serif; }
+.m-tab { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+.m-tab .pill { width: 64px; height: 32px; border-radius: 16px; display: grid; place-items: center; }
+.m-tab.on { color: var(--color-text-primary); font-weight: 700; }
+.m-tab.on .pill { background: var(--color-accent-subtle); color: var(--color-accent-text); }
+.fab { position: absolute; right: 16px; bottom: 108px; width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; z-index: 31; background: var(--color-accent); color: var(--color-text-on-accent); box-shadow: 0 6px 16px -4px #0000004d; }
+.fab svg.i { width: 26px; height: 26px; stroke-width: 2.2; }
+
+/* Android glass mode (proposed): floating capsule nav + glass FAB, only where the device supports blur */
+.mg-nav { position: absolute; left: 14px; right: 14px; bottom: 22px; height: 66px; border-radius: 999px; padding: 5px; display: grid; grid-template-columns: repeat(4, 1fr); z-index: 35; font-family: Roboto, Inter, sans-serif; }
+.mg-nav .m-tab { justify-content: center; gap: 2px; color: var(--color-text-primary); font-size: 11px; }
+.mg-nav .m-tab .pill { height: 30px; }
+.mg-nav .lens { position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc((100% - 10px) / 4); border-radius: 999px; background: color-mix(in srgb, var(--color-text-primary) 9%, transparent); }
+.mg-nav .m-tab.on .pill { background: transparent; }
+.fab.glass-tinted { border-radius: 50%; }
+.m-top.glassy { background: transparent; }
+.m-top.glassy::before { content: ""; position: absolute; inset: 0 0 -24px 0; z-index: -1; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  background: linear-gradient(to bottom, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 70%, transparent) 60%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent); mask-image: linear-gradient(to bottom, #000 60%, transparent); }
+.m-top.glassy { isolation: isolate; }
+.m-top.glassy .m-icon { width: 44px; height: 44px; }
+
+.legend { max-width: 1320px; margin: 36px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.legend div { background: var(--color-surface); border-radius: 20px; padding: 16px 18px; box-shadow: 0 0 0 1px var(--color-border); font-size: 14px; line-height: 20px; color: var(--color-text-secondary); }
+.legend b { color: var(--color-text-primary); display: block; margin-bottom: 4px; font-size: 15px; }
+.hint { text-align: center; color: var(--color-text-tertiary); font-size: 13px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20M6 15h4"/></symbol>
+  <symbol id="arrows" viewBox="0 0 24 24"><path d="M4 7h15l-4-4M20 17H5l4 4"/></symbol>
+  <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="send" viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3M21 14v1M17 21h4v-3M14 18v3"/></symbol>
+  <symbol id="receipt" viewBox="0 0 24 24"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></symbol>
+  <symbol id="chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="wallet" viewBox="0 0 24 24"><path d="M20 7H5a2 2 0 0 1 0-4h12v4"/><path d="M3 5v14a2 2 0 0 0 2 2h15V7"/><circle cx="16" cy="14" r="1.2"/></symbol>
+  <symbol id="car" viewBox="0 0 24 24"><path d="M5 16h14v-4l-2-5H7l-2 5z"/><circle cx="8" cy="17" r="2"/><circle cx="16" cy="17" r="2"/></symbol>
+  <symbol id="coffee" viewBox="0 0 24 24"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M17 11h1a3 3 0 0 1 0 6h-1M8 2v3M12 2v3"/></symbol>
+  <symbol id="phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+  <symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></symbol>
+  <symbol id="gift" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v9H5v-9M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/></symbol>
+  <symbol id="nfc" viewBox="0 0 24 24"><path d="M8.5 8.5a5 5 0 0 1 0 7M12 6a8.5 8.5 0 0 1 0 12M15.5 3.5a12 12 0 0 1 0 17"/></symbol>
+  <symbol id="signal" viewBox="0 0 24 24"><path d="M3 20h2v-3H3zM8 20h2v-6H8zM13 20h2v-9h-2zM18 20h2V8h-2z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="wifi" viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor"/></symbol>
+  <symbol id="batt" viewBox="0 0 28 14"><rect x="1" y="1" width="23" height="12" rx="3.5"/><rect x="3" y="3" width="17" height="8" rx="2" fill="currentColor" stroke="none"/><path d="M26 5v4"/></symbol>
+</svg>
+
+<div class="page-bg">
+  <div class="top">
+    <div>
+      <h1>Главная — макет</h1>
+      <p>Одна главная страница на нашей дизайн-системе: iOS 27 с Liquid Glass, Android как сейчас (Material 3) и Android с предложенным режимом стекла. Прокрути экраны телефонов, чтобы увидеть, как контент уходит под стекло.</p>
+    </div>
+    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+    <label class="switch" data-reduce><i></i>Меньше движения</label>
+    <div class="seg" role="radiogroup" aria-label="Тема">
+      <button data-theme="light">Светлая</button>
+      <button data-theme="dark">Тёмная</button>
+      <button data-theme="system" class="on">Как в системе</button>
+    </div>
+    </div>
+  </div>
+  <div class="tryit">
+    <span>Нажми и держи стеклянную кнопку — стекло «вспухает» и бликует</span>
+    <span>Переключай вкладки — линза едет на пружине</span>
+    <span>Прокрути вниз — таб-бар сворачивается, вверх — разворачивается</span>
+    <span>Нажми «+» — кнопка перетекает в меню</span>
+    <span>Нажми «Перевести» — шит вырастает из кнопки</span>
+  </div>
+
+  <div class="phones">
+    <!-- ============ iOS 27 ============ -->
+    <div class="col">
+      <div class="device">
+        <div class="screen" id="ios">
+          <div class="island"></div>
+          <div class="status"><span>9:41</span><span class="r"><svg class="i" style="width:18px;height:18px"><use href="#signal"/></svg><svg class="i" style="width:18px;height:18px"><use href="#wifi"/></svg><svg class="i" style="width:27px;height:13px;stroke-width:1.2"><use href="#batt"/></svg></span></div>
+          <div class="scroll" data-scroller>
+            <div class="content" style="padding-top:62px">
+              <p class="sub" style="margin-top:2px">Добрый вечер, Жасур</p>
+              <h2 class="large-title" style="margin-bottom:14px">Главная</h2>
+              <div class="bank-card">
+  <div class="blob1"></div><div class="blob2"></div>
+  <div class="bc-top"><span>Alif · Основная</span><svg class="i" style="width:24px;height:24px"><use href="#nfc"/></svg></div>
+  <div class="bc-label">Баланс <span data-eye style="cursor:pointer;display:inline-flex"><svg class="i" style="width:16px;height:16px"><use href="#eye"/></svg></span></div>
+  <div class="bc-amount" data-amt>12 500,00 <small>TJS</small></div>
+  <div class="bc-bottom"><span>•••• 4821</span><span>Visa</span></div>
+</div>
+<div class="actions">
+  <div class="action" data-sheet-open><span class="ib"><svg class="i"><use href="#send"/></svg></span>Перевести</div>
+  <div class="action"><span class="ib"><svg class="i"><use href="#plus"/></svg></span>Пополнить</div>
+  <div class="action"><span class="ib"><svg class="i"><use href="#qr"/></svg></span>QR-оплата</div>
+  <div class="action"><span class="ib"><svg class="i"><use href="#receipt"/></svg></span>Платежи</div>
+</div>
+<div class="sec-h"><h3>Ноябрь</h3><a href="#">Аналитика</a></div>
+<div class="stats">
+  <div class="stat"><p>Доходы</p><b style="color:var(--color-success)">+8 400</b><span class="badge b-succ">+12% к октябрю</span></div>
+  <div class="stat"><p>Расходы</p><b>3 120</b><div class="bar"><i></i></div><span style="font-size:12px;color:var(--color-text-tertiary)">62% бюджета</span></div>
+</div>
+<div class="sec-h"><h3>Последние операции</h3><a href="#">Все</a></div>
+<div class="group">
+  <div class="row"><span class="ico"><svg class="i"><use href="#wallet"/></svg></span><span class="t"><b>Зарплата</b><span>Сегодня · 09:12</span></span><span class="v plus">+8 400,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#car"/></svg></span><span class="t"><b>Такси</b><span>Транспорт · 18:05</span></span><span class="v">−28,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#coffee"/></svg></span><span class="t"><b>Кофейня «Рохат»</b><span>Кафе · вчера</span></span><span class="v">−35,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#phone"/></svg></span><span class="t"><b>Мобильная связь</b><span>Платежи · вчера</span></span><span class="v">−50,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#zap"/></svg></span><span class="t"><b>Электроэнергия</b><span>Коммунальные · 12 ноя</span></span><span class="v">−142,60</span></div>
+  <div class="row"><span class="ico"><svg class="i"><use href="#arrows"/></svg></span><span class="t"><b>Перевод от Фаррух</b><span>Переводы · 11 ноя</span></span><span class="v plus">+300,00</span></div>
+</div>
+<div class="promo"><span class="ico" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--color-surface);color:var(--color-accent-text)"><svg class="i"><use href="#gift"/></svg></span><span><b>Кэшбэк 5% на кафе</b><span>Подключите категорию до конца месяца</span></span></div>
+            </div>
+          </div>
+          <div class="ios-top"><div class="edge-top"></div>
+            <div class="ios-btns">
+              <button class="gbtn glass glass-interactive" aria-label="Уведомления"><svg class="i"><use href="#bell"/></svg></button>
+              <button class="gbtn glass glass-interactive av" aria-label="Профиль">ЖА</button>
+            </div>
+          </div>
+          <div class="edge-bottom"></div>
+          <div class="tabwrap">
+            <nav class="tabbar glass glass-interactive" data-glassbar style="--idx:0;--col:63px">
+              <span class="lens"></span>
+              <div class="tabs">
+                <button class="tab on"><svg class="i"><use href="#home"/></svg><span>Главная</span></button>
+                <button class="tab"><svg class="i"><use href="#card"/></svg><span>Карты</span></button>
+                <button class="tab"><svg class="i"><use href="#arrows"/></svg><span>Переводы</span></button>
+                <button class="tab"><svg class="i"><use href="#user"/></svg><span>Профиль</span></button>
+              </div>
+            </nav>
+            <button class="searchbtn glass glass-interactive" aria-label="Поиск"><svg class="i"><use href="#search"/></svg></button>
+          </div>
+          <div class="morph glass-tinted glass-interactive" data-morph>
+            <ul>
+              <li><button data-sheet-open><svg class="i"><use href="#send"/></svg>Перевести</button></li>
+              <li><button><svg class="i"><use href="#qr"/></svg>QR-оплата</button></li>
+              <li><button><svg class="i"><use href="#plus"/></svg>Пополнить</button></li>
+              <li><button><svg class="i"><use href="#receipt"/></svg>Платежи</button></li>
+            </ul>
+            <button class="toggle" aria-label="Действия"><svg class="i"><use href="#plus"/></svg></button>
+          </div>
+          <div class="scrim" data-scrim></div>
+          <div class="sheet glass-strong" data-sheet>
+            <div class="grab"></div>
+            <h4>Перевод</h4>
+            <p>По номеру телефона, без комиссии</p>
+            <label>Номер</label>
+            <div class="fld"><span>+992</span>93 123 45 67</div>
+            <label>Сумма</label>
+            <div class="fld" style="font-size:28px;font-weight:700;height:60px">250,00 <span style="font-size:17px;font-weight:600">TJS</span></div>
+            <button class="cta" data-sheet-close>Продолжить</button>
+            <button class="cancel" data-sheet-close>Отмена</button>
+          </div>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+      <div class="cap"><b>iPhone · iOS 27</b><span>Нет верхней панели: стеклянные кнопки висят справа, текст растворяется под ними. Таб-бар — стеклянная капсула с «линзой» и кнопкой поиска, сворачивается при прокрутке. «+» перетекает в меню, шит вырастает из кнопки.</span></div>
+    </div>
+
+    <!-- ============ Android, Material 3 (current) ============ -->
+    <div class="col">
+      <div class="device android">
+        <div class="screen">
+          <div class="punch"></div>
+          <div class="status"><span>9:41</span><span class="r"><svg class="i" style="width:16px;height:16px"><use href="#wifi"/></svg><svg class="i" style="width:16px;height:16px"><use href="#signal"/></svg><svg class="i" style="width:24px;height:12px;stroke-width:1.2"><use href="#batt"/></svg></span></div>
+          <div class="scroll" data-scroller data-mtop>
+            <div class="m-top">
+              <span class="lt">Главная</span>
+              <div class="acts"><span class="m-icon"><svg class="i"><use href="#search"/></svg></span><span class="m-icon"><svg class="i"><use href="#bell"/></svg></span><span class="m-avatar">ЖА</span></div>
+            </div>
+            <div class="content">
+              <div class="bank-card">
+  <div class="blob1"></div><div class="blob2"></div>
+  <div class="bc-top"><span>Alif · Основная</span><svg class="i" style="width:24px;height:24px"><use href="#nfc"/></svg></div>
+  <div class="bc-label">Баланс <span data-eye style="cursor:pointer;display:inline-flex"><svg class="i" style="width:16px;height:16px"><use href="#eye"/></svg></span></div>
+  <div class="bc-amount" data-amt>12 500,00 <small>TJS</small></div>
+  <div class="bc-bottom"><span>•••• 4821</span><span>Visa</span></div>
+</div>
+<div class="actions">
+  <div class="action" data-sheet-open><span class="ib"><svg class="i"><use href="#send"/></svg></span>Перевести</div>
+  <div class="action"><span class="ib"><svg class="i"><use href="#plus"/></svg></span>Пополнить</div>
+  <div class="action"><span class="ib"><svg class="i"><use href="#qr"/></svg></span>QR-оплата</div>
+  <div class="action"><span class="ib"><svg class="i"><use href="#receipt"/></svg></span>Платежи</div>
+</div>
+<div class="sec-h"><h3>Ноябрь</h3><a href="#">Аналитика</a></div>
+<div class="stats">
+  <div class="stat"><p>Доходы</p><b style="color:var(--color-success)">+8 400</b><span class="badge b-succ">+12% к октябрю</span></div>
+  <div class="stat"><p>Расходы</p><b>3 120</b><div class="bar"><i></i></div><span style="font-size:12px;color:var(--color-text-tertiary)">62% бюджета</span></div>
+</div>
+<div class="sec-h"><h3>Последние операции</h3><a href="#">Все</a></div>
+<div class="group">
+  <div class="row"><span class="ico"><svg class="i"><use href="#wallet"/></svg></span><span class="t"><b>Зарплата</b><span>Сегодня · 09:12</span></span><span class="v plus">+8 400,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#car"/></svg></span><span class="t"><b>Такси</b><span>Транспорт · 18:05</span></span><span class="v">−28,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#coffee"/></svg></span><span class="t"><b>Кофейня «Рохат»</b><span>Кафе · вчера</span></span><span class="v">−35,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#phone"/></svg></span><span class="t"><b>Мобильная связь</b><span>Платежи · вчера</span></span><span class="v">−50,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#zap"/></svg></span><span class="t"><b>Электроэнергия</b><span>Коммунальные · 12 ноя</span></span><span class="v">−142,60</span></div>
+  <div class="row"><span class="ico"><svg class="i"><use href="#arrows"/></svg></span><span class="t"><b>Перевод от Фаррух</b><span>Переводы · 11 ноя</span></span><span class="v plus">+300,00</span></div>
+</div>
+<div class="promo"><span class="ico" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--color-surface);color:var(--color-accent-text)"><svg class="i"><use href="#gift"/></svg></span><span><b>Кэшбэк 5% на кафе</b><span>Подключите категорию до конца месяца</span></span></div>
+            </div>
+          </div>
+          <div class="fab"><svg class="i"><use href="#plus"/></svg></div>
+          <nav class="m-nav" data-mnav>
+            <div class="m-tab on"><span class="pill"><svg class="i"><use href="#home"/></svg></span>Главная</div>
+            <div class="m-tab"><span class="pill"><svg class="i"><use href="#card"/></svg></span>Карты</div>
+            <div class="m-tab"><span class="pill"><svg class="i"><use href="#arrows"/></svg></span>Переводы</div>
+            <div class="m-tab"><span class="pill"><svg class="i"><use href="#user"/></svg></span>Профиль</div>
+          </nav>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+      <div class="cap"><b>Android · Material 3 (как сейчас)</b><span>Режим по умолчанию: сплошная навигация, «таблетка» вкладки раскрывается пружиной, FAB, верхняя панель.</span></div>
+    </div>
+
+    <!-- ============ Android glass mode (proposed) ============ -->
+    <div class="col">
+      <div class="device android">
+        <div class="screen">
+          <div class="punch"></div>
+          <div class="status"><span>9:41</span><span class="r"><svg class="i" style="width:16px;height:16px"><use href="#wifi"/></svg><svg class="i" style="width:16px;height:16px"><use href="#signal"/></svg><svg class="i" style="width:24px;height:12px;stroke-width:1.2"><use href="#batt"/></svg></span></div>
+          <div class="scroll" data-scroller>
+            <div class="m-top glassy">
+              <span class="lt">Главная</span>
+              <div class="acts"><span class="m-icon glass"><svg class="i"><use href="#search"/></svg></span><span class="m-icon glass"><svg class="i"><use href="#bell"/></svg></span></div>
+            </div>
+            <div class="content">
+              <div class="bank-card">
+  <div class="blob1"></div><div class="blob2"></div>
+  <div class="bc-top"><span>Alif · Основная</span><svg class="i" style="width:24px;height:24px"><use href="#nfc"/></svg></div>
+  <div class="bc-label">Баланс <span data-eye style="cursor:pointer;display:inline-flex"><svg class="i" style="width:16px;height:16px"><use href="#eye"/></svg></span></div>
+  <div class="bc-amount" data-amt>12 500,00 <small>TJS</small></div>
+  <div class="bc-bottom"><span>•••• 4821</span><span>Visa</span></div>
+</div>
+<div class="actions">
+  <div class="action" data-sheet-open><span class="ib"><svg class="i"><use href="#send"/></svg></span>Перевести</div>
+  <div class="action"><span class="ib"><svg class="i"><use href="#plus"/></svg></span>Пополнить</div>
+  <div class="action"><span class="ib"><svg class="i"><use href="#qr"/></svg></span>QR-оплата</div>
+  <div class="action"><span class="ib"><svg class="i"><use href="#receipt"/></svg></span>Платежи</div>
+</div>
+<div class="sec-h"><h3>Ноябрь</h3><a href="#">Аналитика</a></div>
+<div class="stats">
+  <div class="stat"><p>Доходы</p><b style="color:var(--color-success)">+8 400</b><span class="badge b-succ">+12% к октябрю</span></div>
+  <div class="stat"><p>Расходы</p><b>3 120</b><div class="bar"><i></i></div><span style="font-size:12px;color:var(--color-text-tertiary)">62% бюджета</span></div>
+</div>
+<div class="sec-h"><h3>Последние операции</h3><a href="#">Все</a></div>
+<div class="group">
+  <div class="row"><span class="ico"><svg class="i"><use href="#wallet"/></svg></span><span class="t"><b>Зарплата</b><span>Сегодня · 09:12</span></span><span class="v plus">+8 400,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#car"/></svg></span><span class="t"><b>Такси</b><span>Транспорт · 18:05</span></span><span class="v">−28,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#coffee"/></svg></span><span class="t"><b>Кофейня «Рохат»</b><span>Кафе · вчера</span></span><span class="v">−35,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#phone"/></svg></span><span class="t"><b>Мобильная связь</b><span>Платежи · вчера</span></span><span class="v">−50,00</span></div>
+  <div class="row"><span class="ico n"><svg class="i"><use href="#zap"/></svg></span><span class="t"><b>Электроэнергия</b><span>Коммунальные · 12 ноя</span></span><span class="v">−142,60</span></div>
+  <div class="row"><span class="ico"><svg class="i"><use href="#arrows"/></svg></span><span class="t"><b>Перевод от Фаррух</b><span>Переводы · 11 ноя</span></span><span class="v plus">+300,00</span></div>
+</div>
+<div class="promo"><span class="ico" style="width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--color-surface);color:var(--color-accent-text)"><svg class="i"><use href="#gift"/></svg></span><span><b>Кэшбэк 5% на кафе</b><span>Подключите категорию до конца месяца</span></span></div>
+            </div>
+          </div>
+          <div class="edge-bottom"></div>
+          <div class="tabwrap">
+            <nav class="tabbar glass glass-interactive" data-glassbar style="--idx:0;--col:65px">
+              <span class="lens"></span>
+              <div class="tabs">
+                <button class="tab on"><svg class="i"><use href="#home"/></svg><span>Главная</span></button>
+                <button class="tab"><svg class="i"><use href="#card"/></svg><span>Карты</span></button>
+                <button class="tab"><svg class="i"><use href="#arrows"/></svg><span>Переводы</span></button>
+                <button class="tab"><svg class="i"><use href="#user"/></svg><span>Профиль</span></button>
+              </div>
+            </nav>
+            <button class="searchbtn glass glass-interactive" aria-label="Поиск"><svg class="i"><use href="#search"/></svg></button>
+          </div>
+          <div class="morph glass-tinted glass-interactive" data-morph>
+            <ul>
+              <li><button data-sheet-open><svg class="i"><use href="#send"/></svg>Перевести</button></li>
+              <li><button><svg class="i"><use href="#qr"/></svg>QR-оплата</button></li>
+              <li><button><svg class="i"><use href="#plus"/></svg>Пополнить</button></li>
+              <li><button><svg class="i"><use href="#receipt"/></svg>Платежи</button></li>
+            </ul>
+            <button class="toggle" aria-label="Действия"><svg class="i"><use href="#plus"/></svg></button>
+          </div>
+          <div class="scrim" data-scrim></div>
+          <div class="sheet glass-strong" data-sheet>
+            <div class="grab"></div>
+            <h4>Перевод</h4>
+            <p>По номеру телефона, без комиссии</p>
+            <label>Номер</label>
+            <div class="fld"><span>+992</span>93 123 45 67</div>
+            <label>Сумма</label>
+            <div class="fld" style="font-size:28px;font-weight:700;height:60px">250,00 <span style="font-size:17px;font-weight:600">TJS</span></div>
+            <button class="cta" data-sheet-close>Продолжить</button>
+            <button class="cancel" data-sheet-close>Отмена</button>
+          </div>
+          <div class="home-ind"></div>
+        </div>
+      </div>
+      <div class="cap"><b>Android · режим стекла (предложение)</b><span>Те же анимации, что на iOS: пружины, сворачивание, отклик стекла, перетекание «+» в меню и шит из кнопки. На слабых устройствах — как вариант слева.</span></div>
+    </div>
+  </div>
+  <p class="hint">Прокрути любой телефон колесом мыши или пальцем.</p>
+
+  <div class="legend">
+    <div><b>Стекло — только навигация</b>Таб-бар, кнопки сверху, поиск, FAB. Карточки, списки и кнопки быстрых действий — сплошные.</div>
+    <div><b>Один главный акцент</b>Бирюзовый #0E8577 (в тёмной теме #2DD4BF с тёмным текстом): активная вкладка, ссылки, иконки, прогресс.</div>
+    <div><b>Деньги</b>Цифры одинаковой ширины, «12 500,00 TJS». Доходы зелёные с «+», расходы обычным цветом с «−».</div>
+    <div><b>Формы</b>Капсулы для управления, карточки 20, банковская карта 24, отступы по сетке 4.</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const reduced = () => root.classList.contains('reduce-motion') || matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const css = (n, f) => getComputedStyle(root).getPropertyValue(n).trim() || f;
+  const spring = k => ({ easing: css(`--easing-spring-${k}`, 'ease-out'), duration: parseFloat(css(`--duration-spring-${k}`, '450')) });
+
+  // Theme + reduce-motion switches
+  document.querySelectorAll('[data-theme]').forEach(b => b.addEventListener('click', () => {
+    root.classList.remove('light', 'dark');
+    if (b.dataset.theme !== 'system') root.classList.add(b.dataset.theme);
+    document.querySelectorAll('[data-theme]').forEach(x => x.classList.toggle('on', x === b));
+  }));
+  const rm = document.querySelector('[data-reduce]');
+  rm.addEventListener('click', e => { e.preventDefault(); rm.classList.toggle('on'); root.classList.toggle('reduce-motion', rm.classList.contains('on')); });
+
+  // Glass press: grows under the finger + highlight from the touch point (same as ds/motion.ts installGlassPress)
+  let pressed = null;
+  const setPt = (el, e) => { const r = el.getBoundingClientRect(); el.style.setProperty('--px', (e.clientX - r.left) + 'px'); el.style.setProperty('--py', (e.clientY - r.top) + 'px'); };
+  document.addEventListener('pointerdown', e => { const el = e.target.closest('.glass-interactive'); if (!el) return; setPt(el, e); el.classList.add('is-pressed'); pressed = el; });
+  document.addEventListener('pointermove', e => pressed && setPt(pressed, e));
+  ['pointerup', 'pointercancel'].forEach(t => document.addEventListener(t, () => { pressed?.classList.remove('is-pressed'); pressed = null; }));
+
+  // Container transform (same as ds/motion.ts morphFrom)
+  async function morphFrom(target, origin, reverse = false) {
+    if (reduced()) {
+      await target.animate([{ opacity: reverse ? 1 : 0 }, { opacity: reverse ? 0 : 1 }], { duration: 160, fill: 'both' }).finished;
+      return;
+    }
+    const o = origin.getBoundingClientRect(), t = target.getBoundingClientRect();
+    const from = { transform: `translate(${o.left + o.width / 2 - (t.left + t.width / 2)}px, ${o.top + o.height / 2 - (t.top + t.height / 2)}px) scale(${o.width / t.width}, ${o.height / t.height})`, borderRadius: getComputedStyle(origin).borderRadius, opacity: .6 };
+    const to = { transform: 'none', borderRadius: getComputedStyle(target).borderRadius, opacity: 1 };
+    const { easing, duration } = spring('standard');
+    [...target.children].forEach(k => k.animate(reverse ? [{ opacity: 1 }, { opacity: 0 }] : [{ opacity: 0 }, { opacity: 0, offset: .35 }, { opacity: 1 }], { duration: reverse ? duration * .4 : duration, fill: 'both' }));
+    origin.style.visibility = 'hidden';
+    const a = target.animate(reverse ? [to, from] : [from, to], { duration, easing, fill: 'both' });
+    await a.finished;
+    if (reverse) origin.style.visibility = '';
+    else { a.cancel(); [...target.children].forEach(k => k.getAnimations().forEach(x => x.cancel())); }
+  }
+
+  document.querySelectorAll('.screen').forEach(screen => {
+    const scroller = screen.querySelector('[data-scroller]');
+    const bar = screen.querySelector('[data-glassbar]');
+    const morph = screen.querySelector('[data-morph]');
+    const sheet = screen.querySelector('[data-sheet]');
+    const scrim = screen.querySelector('[data-scrim]');
+
+    // Tabs: spring lens
+    bar?.querySelectorAll('.tab').forEach((t, i) => t.addEventListener('click', () => {
+      bar.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+      bar.style.setProperty('--idx', i);
+      bar.classList.remove('min');
+    }));
+
+    // Minimize on scroll (down = shrink to the active tab, up = restore)
+    if (bar && scroller) {
+      let last = 0;
+      scroller.addEventListener('scroll', () => {
+        const y = scroller.scrollTop;
+        if (Math.abs(y - last) < 6) return;
+        bar.classList.toggle('min', y > last && y > 80);
+        last = y;
+      }, { passive: true });
+    }
+
+    // FAB → menu morph; actions materialize one after another
+    let setOpen = () => {};
+    if (morph) {
+      const toggle = morph.querySelector('.toggle');
+      setOpen = open => {
+        morph.classList.toggle('open', open);
+        morph.classList.toggle('glass-tinted', !open);
+        morph.classList.toggle('glass-strong', open);
+        morph.querySelectorAll('li').forEach((li, i) => {
+          li.classList.remove('glass-materialize');
+          if (open) { void li.offsetWidth; li.style.animationDelay = (40 + i * 35) + 'ms'; li.classList.add('glass-materialize'); }
+        });
+      };
+      toggle.addEventListener('click', e => { e.stopPropagation(); setOpen(!morph.classList.contains('open')); });
+      screen.addEventListener('pointerdown', e => { if (morph.classList.contains('open') && !morph.contains(e.target)) setOpen(false); });
+    }
+
+    // Button → sheet (container transform) and back
+    let origin = null;
+    const openSheet = async btn => {
+      origin = btn.querySelector('.ib') || btn.closest('[data-morph]') || btn;
+      sheet.classList.add('on'); scrim.classList.add('on');
+      await morphFrom(sheet, origin);
+    };
+    const closeSheet = async () => {
+      scrim.classList.remove('on');
+      await morphFrom(sheet, origin, true);
+      sheet.getAnimations().forEach(a => a.cancel()); [...sheet.children].forEach(k => k.getAnimations().forEach(a => a.cancel()));
+      sheet.classList.remove('on');
+    };
+    if (sheet) {
+      screen.querySelectorAll('[data-sheet-open]').forEach(b => b.addEventListener('click', () => {
+        if (b.closest('[data-morph]')) { setOpen(false); setTimeout(() => openSheet(morph), 380); }   // menu melts back, then the sheet grows out of the button
+        else openSheet(b);
+      }));
+      screen.querySelectorAll('[data-sheet-close]').forEach(b => b.addEventListener('click', closeSheet));
+      scrim.addEventListener('click', closeSheet);
+    }
+    morph?.querySelectorAll('li button:not([data-sheet-open])').forEach(b => b.addEventListener('click', () => setOpen(false)));
+
+    // iOS scroll-edge appears once content moves under the buttons
+    const iosTop = screen.querySelector('.ios-top');
+    scroller && iosTop && scroller.addEventListener('scroll', () => iosTop.classList.toggle('scrolled', scroller.scrollTop > 8), { passive: true });
+
+    // Material: top bar tint + pill expanding with a spring
+    scroller?.addEventListener('scroll', () => scroller.querySelector('.m-top:not(.glassy)')?.classList.toggle('scrolled', scroller.scrollTop > 4), { passive: true });
+    screen.querySelectorAll('[data-mnav] .m-tab').forEach(t => t.addEventListener('click', () =>
+      screen.querySelectorAll('[data-mnav] .m-tab').forEach(x => x.classList.toggle('on', x === t))));
+  });
+
+  // Balance hide/show
+  document.querySelectorAll('[data-eye]').forEach(e => e.addEventListener('click', () => {
+    const amt = e.closest('.bank-card').querySelector('[data-amt]');
+    amt.dataset.v = amt.dataset.v || amt.innerHTML;
+    amt.innerHTML = amt.innerHTML.includes('••') ? amt.dataset.v : '•••• <small>TJS</small>';
+  }));
+})();
+</script>
+
+</body>
+</html>
