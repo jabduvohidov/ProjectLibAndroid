@@ -66,7 +66,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import tj.jasurbek.projectlib.data.DueState
 import tj.jasurbek.projectlib.data.Idea
-import tj.jasurbek.projectlib.data.IdeaStatus
+import tj.jasurbek.projectlib.data.DEFAULT_STATUSES
+import tj.jasurbek.projectlib.data.StatusDef
+import tj.jasurbek.projectlib.data.of
 import tj.jasurbek.projectlib.data.ProjectStatus
 import tj.jasurbek.projectlib.data.SyncState
 import tj.jasurbek.projectlib.data.SyncStatus
@@ -143,22 +145,23 @@ fun ProjectStatusBadge(status: ProjectStatus) = DSBadge(status.label, status.ton
 
 /** Idea status badge that doubles as a one-tap status switcher. */
 @Composable
-fun IdeaStatusPicker(status: IdeaStatus, onChange: (IdeaStatus) -> Unit) {
+fun IdeaStatusPicker(columns: List<StatusDef>, status: String, onChange: (String) -> Unit) {
     var open by remember { mutableStateOf(false) }
+    val cur = columns.of(status)
     Box {
         Row(
-            Modifier.clip(CircleShape).clickable { open = true }.semantics { contentDescription = "Статус: ${status.label}. Изменить" },
+            Modifier.clip(CircleShape).clickable { open = true }.semantics { contentDescription = "Статус: ${cur.label}. Изменить" },
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ToneBadge(status.label, status.tone, dot = true, trailing = Icons.Rounded.KeyboardArrowDown)
+            ToneBadge(cur.label, cur.dsTone, dot = true, trailing = Icons.Rounded.KeyboardArrowDown)
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }, shape = MaterialTheme.shapes.medium) {
-            IdeaStatus.entries.forEach { s ->
+            columns.forEach { s ->
                 DropdownMenuItem(
-                    text = { Text(s.label) },
-                    leadingIcon = { StatusDot(s.tone) },
-                    trailingIcon = if (s == status) ({ Icon(Icons.Rounded.Check, null, tint = DS.colors.accentText) }) else null,
-                    onClick = { open = false; onChange(s) },
+                    text = { Text(if (s.excluded == true) "${s.label} · вне прогресса" else "${s.label} · ${s.percent}%") },
+                    leadingIcon = { StatusDot(s.dsTone) },
+                    trailingIcon = if (s.id == cur.id) ({ Icon(Icons.Rounded.Check, null, tint = DS.colors.accentText) }) else null,
+                    onClick = { open = false; onChange(s.id) },
                 )
             }
         }
@@ -189,8 +192,8 @@ fun ToneBadge(text: String, tone: DSTone, dot: Boolean = false, leading: ImageVe
 
 /** Deadline chip: overdue (danger) · today (warning) · within 3 days (info) · later (neutral). Closed ideas show none. */
 @Composable
-fun DueBadge(idea: Idea) {
-    val state = idea.dueState() ?: return
+fun DueBadge(idea: Idea, columns: List<StatusDef> = DEFAULT_STATUSES) {
+    val state = idea.dueState(columns) ?: return
     val date = formatDue(idea.dueDate ?: return)
     val (tone, label) = when (state) {
         DueState.Overdue -> DSTone.Danger to "Просрочено · $date"

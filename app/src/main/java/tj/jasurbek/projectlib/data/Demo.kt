@@ -5,7 +5,7 @@ private const val DAY = 86_400_000L
 /** Seed data (same as the web app's demo). Replaceable from Settings. */
 fun demoProjects(): List<Project> {
     val now = System.currentTimeMillis()
-    fun idea(title: String, description: String, status: IdeaStatus, priority: Priority, created: Long, updated: Long) =
+    fun idea(title: String, description: String, status: String, priority: Priority, created: Long, updated: Long) =
         Idea(uid(), title, description, status, priority, createdAt = now - created * DAY, updatedAt = now - updated * DAY)
     return listOf(
         Project(

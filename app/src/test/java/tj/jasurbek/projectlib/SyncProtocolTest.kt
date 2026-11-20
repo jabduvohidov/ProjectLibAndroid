@@ -23,6 +23,9 @@ import tj.jasurbek.projectlib.data.SyncResponse
 import tj.jasurbek.projectlib.data.applyOps
 import tj.jasurbek.projectlib.data.diffFields
 import tj.jasurbek.projectlib.data.mergeChanges
+import tj.jasurbek.projectlib.data.DEFAULT_STATUSES
+import tj.jasurbek.projectlib.data.of
+import tj.jasurbek.projectlib.data.progress
 
 /** The wire format must match the web client / server (src/lib/sync-protocol.ts, server/validate.ts). */
 class SyncProtocolTest {
@@ -107,5 +110,37 @@ class SyncProtocolTest {
         assertEquals(1, p.shareCount)
         assertEquals(tj.jasurbek.projectlib.data.ShareAccess.Edit, p.shares!!.single().access)
         assertEquals("u2", p.ideas.single().updatedBy)
+    }
+
+    @Test fun decodesProjectColumnsAndCustomStatuses() {
+        val text = """
+            {"rev":4,"full":true,
+             "projects":[{"id":"p1","name":"Своя доска","status":"active","tags":[],"links":[],"createdAt":1,"updatedAt":2,
+                          "statuses":[{"id":"todo","name":"Сделать","tone":"neutral","percent":0},
+                                      {"id":"cc5d950fc-d","name":"В работе","tone":"warning","percent":60},
+                                      {"id":"ok","name":"Готово","tone":"success","percent":100},
+                                      {"id":"no","name":"Не будем","tone":"danger","percent":0,"excluded":true}]}],
+             "ideas":[{"projectId":"p1","id":"a","title":"A","status":"cc5d950fc-d","priority":"medium","createdAt":1,"updatedAt":2},
+                      {"projectId":"p1","id":"b","title":"B","status":"ok","priority":"medium","createdAt":1,"updatedAt":2},
+                      {"projectId":"p1","id":"c","title":"C","status":"no","priority":"medium","createdAt":1,"updatedAt":2},
+                      {"projectId":"p1","id":"d","title":"D","status":"gone","priority":"medium","createdAt":1,"updatedAt":2}],
+             "rejected":[]}
+        """.trimIndent()
+        val p = mergeChanges(emptyList(), AppJson.decodeFromString(SyncResponse.serializer(), text)).single()
+        assertEquals(listOf("Сделать", "В работе", "Готово", "Не будем"), p.columns.map { it.name })
+        assertEquals("cc5d950fc-d", p.ideas.first { it.id == "a" }.status)
+        // An unknown column id falls back to the first column.
+        assertEquals("todo", p.columns.of("gone").id)
+        // Progress = average percent, "Не будем" excluded: (60 + 100 + 0) / 3 = 53.
+        val prog = p.progress()
+        assertEquals(53, prog.percent)
+        assertEquals(1, prog.done)
+        assertEquals(3, prog.total)
+    }
+
+    @Test fun projectsWithoutColumnsUseTheDefaults() {
+        assertEquals(DEFAULT_STATUSES, project.columns)
+        val p = project.copy(ideas = listOf(idea.copy(status = IdeaStatus.InProgress), idea.copy(id = "i2", status = IdeaStatus.Done), idea.copy(id = "i3", status = IdeaStatus.Dropped)))
+        assertEquals(75, p.progress().percent)
     }
 }

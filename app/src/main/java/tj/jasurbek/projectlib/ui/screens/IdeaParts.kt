@@ -38,7 +38,10 @@ import tj.jasurbek.projectlib.data.DueState
 import tj.jasurbek.projectlib.data.Idea
 import tj.jasurbek.projectlib.data.IdeaLayout
 import tj.jasurbek.projectlib.data.IdeaSort
-import tj.jasurbek.projectlib.data.IdeaStatus
+import tj.jasurbek.projectlib.data.DEFAULT_STATUSES
+import tj.jasurbek.projectlib.data.StatusDef
+import tj.jasurbek.projectlib.data.isOpenIn
+import tj.jasurbek.projectlib.data.of
 import tj.jasurbek.projectlib.data.Priority
 import tj.jasurbek.projectlib.data.byIdeaOrder
 import tj.jasurbek.projectlib.data.dueState
@@ -63,26 +66,27 @@ value class IdeaFilter(val key: String) {
         val Open = IdeaFilter("open")
         val All = IdeaFilter("all")
         val Overdue = IdeaFilter("overdue")
-        fun of(s: IdeaStatus) = IdeaFilter(s.name)
+        /** A column, by name — so it works across projects with their own columns (web: statusFilter). */
+        fun ofName(name: String) = IdeaFilter("s:" + name.trim().lowercase())
     }
-    fun matches(i: Idea, today: String = todayISO()): Boolean = when (key) {
+    fun matches(i: Idea, columns: List<StatusDef> = DEFAULT_STATUSES, today: String = todayISO()): Boolean = when (key) {
         "all" -> true
-        "open" -> i.isOpen
-        "overdue" -> i.dueState(today) == DueState.Overdue
-        else -> i.status.name == key
+        "open" -> i.isOpenIn(columns)
+        "overdue" -> i.dueState(columns, today) == DueState.Overdue
+        else -> ofName(columns.of(i.status).name).key == key
     }
 }
 
-private val byDue = Comparator<Idea> { a, b ->
+private fun byDue(columns: List<StatusDef>) = Comparator<Idea> { a, b ->
     // Open ideas with a deadline first (earliest first), then everything else in manual order.
-    val da = if (a.isOpen && !a.dueDate.isNullOrEmpty()) a.dueDate else "9999"
-    val db = if (b.isOpen && !b.dueDate.isNullOrEmpty()) b.dueDate else "9999"
+    val da = if (a.isOpenIn(columns) && !a.dueDate.isNullOrEmpty()) a.dueDate else "9999"
+    val db = if (b.isOpenIn(columns) && !b.dueDate.isNullOrEmpty()) b.dueDate else "9999"
     val c = da.compareTo(db)
     if (c != 0) c else byIdeaOrder.compare(a, b)
 }
 
-fun ideaSorter(s: IdeaSort): Comparator<Idea> = when (s) {
-    IdeaSort.Due -> byDue
+fun ideaSorter(s: IdeaSort, columns: List<StatusDef> = DEFAULT_STATUSES): Comparator<Idea> = when (s) {
+    IdeaSort.Due -> byDue(columns)
     IdeaSort.New -> compareByDescending { it.createdAt }
     IdeaSort.Order -> byIdeaOrder
 }
@@ -100,14 +104,17 @@ fun between(prev: Double?, next: Double?): Double = when {
 /** List/board switch, sort (list) and filter chips (list) shared by the project screen and the Ideas screen. */
 @Composable
 fun IdeasToolbar(
-    ideas: List<Idea>,
+    /** Ideas with their project's columns. */
+    ideas: List<Pair<Idea, List<StatusDef>>>,
     layout: IdeaLayout, onLayout: (IdeaLayout) -> Unit,
     sort: IdeaSort, onSort: (IdeaSort) -> Unit,
     filter: IdeaFilter, onFilter: (IdeaFilter) -> Unit,
     allStatusChips: Boolean = false,
 ) {
     val today = todayISO()
-    fun count(f: IdeaFilter) = ideas.count { f.matches(it, today) }
+    fun count(f: IdeaFilter) = ideas.count { (i, cols) -> f.matches(i, cols, today) }
+    // Column chips by name, in column order, merged across projects.
+    val columnChips = ideas.map { it.second }.distinct().flatten().distinctBy { IdeaFilter.ofName(it.name).key }
     val overdue = count(IdeaFilter.Overdue)
     Column(verticalArrangement = Arrangement.spacedBy(DSSpace.md)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
@@ -136,8 +143,9 @@ fun IdeasToolbar(
                 CountChip("Открытые", filter == IdeaFilter.Open) { onFilter(IdeaFilter.Open) }
                 CountChip("Все", filter == IdeaFilter.All) { onFilter(IdeaFilter.All) }
                 if (overdue > 0) CountChip("Просрочено", filter == IdeaFilter.Overdue, overdue, danger = true) { onFilter(IdeaFilter.Overdue) }
-                IdeaStatus.entries.filter { allStatusChips || count(IdeaFilter.of(it)) > 0 }.forEach { s ->
-                    CountChip(s.label, filter == IdeaFilter.of(s), count(IdeaFilter.of(s))) { onFilter(IdeaFilter.of(s)) }
+                columnChips.filter { allStatusChips || count(IdeaFilter.ofName(it.name)) > 0 }.forEach { s ->
+                    val f = IdeaFilter.ofName(s.name)
+                    CountChip(s.label, filter == f, count(f)) { onFilter(f) }
                 }
             }
         } else if (overdue > 0) {
@@ -152,12 +160,14 @@ fun IdeasToolbar(
 @Composable
 fun IdeaRow(
     projectId: String, idea: Idea, onEdit: () -> Unit, onDelete: () -> Unit,
+    /** The project's columns. */
+    columns: List<StatusDef> = DEFAULT_STATUSES,
     /** View-only project: no editing controls. */
     readOnly: Boolean = false,
     /** Shared project: show who changed the idea last. */
     showAuthor: Boolean = false,
 ) {
-    val closed = !idea.isOpen
+    val closed = !idea.isOpenIn(columns)
     var menu by remember { mutableStateOf(false) }
     Row(
         Modifier.fillMaxWidth().then(if (readOnly) Modifier else Modifier.clickable(onClick = onEdit))
@@ -179,9 +189,10 @@ fun IdeaRow(
                 horizontalArrangement = Arrangement.spacedBy(DSSpace.xs), verticalArrangement = Arrangement.spacedBy(DSSpace.xs),
                 itemVerticalAlignment = Alignment.CenterVertically,
             ) {
-                if (readOnly) DSBadge(idea.status.label, idea.status.tone, dot = true)
-                else IdeaStatusPicker(idea.status) { s -> App.instance.repo.updateIdea(projectId, idea.id) { it.copy(status = s) } }
-                DueBadge(idea)
+                val col = columns.of(idea.status)
+                if (readOnly) DSBadge(col.label, col.dsTone, dot = true)
+                else IdeaStatusPicker(columns, idea.status) { s -> App.instance.repo.updateIdea(projectId, idea.id) { it.copy(status = s) } }
+                DueBadge(idea, columns)
                 if (idea.priority != Priority.Medium) DSBadge("${idea.priority.label} приоритет", idea.priority.tone)
                 if (showAuthor) {
                     val changed = idea.updatedBy != null && idea.updatedBy != idea.createdBy

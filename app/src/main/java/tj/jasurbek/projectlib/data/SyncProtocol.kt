@@ -27,7 +27,7 @@ val AppJson = Json {
     classDiscriminator = "type"
 }
 
-val PROJECT_FIELDS = listOf("name", "description", "status", "tags", "links")
+val PROJECT_FIELDS = listOf("name", "description", "status", "tags", "links", "statuses")
 val IDEA_FIELDS = listOf("title", "description", "status", "priority", "dueDate", "order", "attachments")
 
 @Serializable

@@ -37,6 +37,7 @@ import tj.jasurbek.projectlib.ui.designsystem.DSCard
 import tj.jasurbek.projectlib.ui.designsystem.DSEmptyState
 import tj.jasurbek.projectlib.ui.designsystem.DSSpace
 import tj.jasurbek.projectlib.ui.forms.IdeaFormSheet
+import tj.jasurbek.projectlib.data.DEFAULT_STATUSES
 
 private data class Target(val projectId: String, val idea: Idea)
 
@@ -56,7 +57,7 @@ fun IdeasScreen(nav: Nav) {
     val q = query.trim().lowercase()
     fun matchQuery(i: Idea) = q.isEmpty() || i.title.lowercase().contains(q) || i.description.lowercase().contains(q)
     val groups = projects
-        .map { p -> p to p.ideas.filter { matchQuery(it) && filter.matches(it) }.sortedWith(ideaSorter(settings.ideaSort)) }
+        .map { p -> p to p.ideas.filter { matchQuery(it) && filter.matches(it, p.columns) }.sortedWith(ideaSorter(settings.ideaSort, p.columns)) }
         .filter { it.second.isNotEmpty() }
 
     AppScreen(title = "Идеи", nav = nav, subtitle = "${all.size} во всех проектах") {
@@ -74,7 +75,7 @@ fun IdeasScreen(nav: Nav) {
             Column(verticalArrangement = Arrangement.spacedBy(DSSpace.md)) {
                 SearchField(query, { query = it }, "Поиск по идеям")
                 IdeasToolbar(
-                    all.map { it.second }, settings.ideaLayout, app.settings::setIdeaLayout, settings.ideaSort, app.settings::setIdeaSort,
+                    all.map { (p, i) -> i to p.columns }, settings.ideaLayout, app.settings::setIdeaLayout, settings.ideaSort, app.settings::setIdeaSort,
                     filter, { filter = it }, allStatusChips = true,
                 )
             }
@@ -82,7 +83,8 @@ fun IdeasScreen(nav: Nav) {
         when {
             settings.ideaLayout == IdeaLayout.Board -> item(key = "board") {
                 IdeaBoard(
-                    all.filter { matchQuery(it.second) }.map { (p, i) -> BoardItem(p.id, i, p.name, readOnly = !p.canEdit) },
+                    all.filter { matchQuery(it.second) }.map { (p, i) -> BoardItem(p.id, i, p.name, readOnly = !p.canEdit, columns = p.columns) },
+                    mergedBoard(projects),
                     onEdit = { editing = Target(it.projectId, it.idea) },
                 )
             }
@@ -104,7 +106,7 @@ fun IdeasScreen(nav: Nav) {
                         ListGroup {
                             ideas.forEachIndexed { i, idea ->
                                 if (i > 0) GroupDivider()
-                                IdeaRow(project.id, idea, onEdit = { editing = Target(project.id, idea) }, onDelete = { deleting = Target(project.id, idea) },
+                                IdeaRow(project.id, idea, onEdit = { editing = Target(project.id, idea) }, onDelete = { deleting = Target(project.id, idea) }, columns = project.columns,
                                     readOnly = !project.canEdit, showAuthor = !project.isOwn || project.shareCount > 0)
                             }
                         }
@@ -115,7 +117,8 @@ fun IdeasScreen(nav: Nav) {
     }
 
     editing?.let { t ->
-        IdeaFormSheet(t.idea, onDismiss = { editing = null }, onSubmit = { repo.updateIdea(t.projectId, t.idea.id, it); toast("Идея сохранена") })
+        IdeaFormSheet(t.idea, onDismiss = { editing = null }, columns = projects.firstOrNull { it.id == t.projectId }?.columns ?: DEFAULT_STATUSES,
+            onSubmit = { repo.updateIdea(t.projectId, t.idea.id, it); toast("Идея сохранена") })
     }
     deleting?.let { t ->
         ConfirmDialog("Удалить идею?", "«${t.idea.title}» будет удалена.", "Удалить идею",

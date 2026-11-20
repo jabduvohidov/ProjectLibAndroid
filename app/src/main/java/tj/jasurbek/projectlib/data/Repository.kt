@@ -133,7 +133,7 @@ class Repository(context: Context, private val settings: Settings, val api: Api)
 
     data class ProjectInput(val name: String, val description: String, val status: ProjectStatus, val tags: List<String>, val links: List<Link>)
     data class IdeaInput(
-        val title: String, val description: String, val status: IdeaStatus, val priority: Priority,
+        val title: String, val description: String, val status: String, val priority: Priority,
         val dueDate: String, val attachments: List<Attachment>, val order: Double? = null,
     )
 
@@ -163,7 +163,7 @@ class Repository(context: Context, private val settings: Settings, val api: Api)
     fun deleteProject(id: String) = enqueue(Op.ProjectDelete(uid(), System.currentTimeMillis(), id))
 
     /** First position in a status column (new ideas and cards dropped on top go there). */
-    fun topOrder(projectId: String?, status: IdeaStatus): Double {
+    fun topOrder(projectId: String?, status: String): Double {
         val ideas = _projects.value.filter { projectId == null || it.id == projectId }.flatMap { it.ideas }.filter { it.status == status }
         return if (ideas.isEmpty()) -System.currentTimeMillis().toDouble() else ideas.minOf { it.sortOrder } - 1
     }

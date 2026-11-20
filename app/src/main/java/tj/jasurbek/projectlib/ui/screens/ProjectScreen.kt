@@ -46,7 +46,6 @@ import tj.jasurbek.projectlib.App
 import tj.jasurbek.projectlib.data.Access
 import tj.jasurbek.projectlib.data.Idea
 import tj.jasurbek.projectlib.data.IdeaLayout
-import tj.jasurbek.projectlib.data.IdeaStatus
 import tj.jasurbek.projectlib.data.Link
 import tj.jasurbek.projectlib.data.LinkKind
 import tj.jasurbek.projectlib.data.Platform
@@ -83,7 +82,7 @@ import tj.jasurbek.projectlib.ui.launch.LocalLauncher
 import tj.jasurbek.projectlib.ui.launch.linkIcon
 
 /** Open / edit idea dialog state: [idea] = edit, else new idea with [status]. */
-data class IdeaDialog(val idea: Idea? = null, val status: IdeaStatus = IdeaStatus.New, val projectId: String)
+data class IdeaDialog(val idea: Idea? = null, val status: String? = null, val projectId: String)
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -121,7 +120,8 @@ fun ProjectScreen(id: String, nav: Nav) {
     val owner = project.isOwn
     val manage = project.canManage // owner or admin
     val hasMenu = canEdit || manage
-    val ideas = project.ideas.filter { filter.matches(it) }.sortedWith(ideaSorter(settings.ideaSort))
+    val columns = project.columns
+    val ideas = project.ideas.filter { filter.matches(it, columns) }.sortedWith(ideaSorter(settings.ideaSort, columns))
 
     AppScreen(
         title = project.name, nav = nav, showBack = true,
@@ -235,7 +235,7 @@ fun ProjectScreen(id: String, nav: Nav) {
                 DSSectionHeader("Идеи · ${project.ideas.size}")
                 if (project.ideas.isNotEmpty()) {
                     IdeasToolbar(
-                        project.ideas, settings.ideaLayout, app.settings::setIdeaLayout, settings.ideaSort, app.settings::setIdeaSort,
+                        project.ideas.map { it to columns }, settings.ideaLayout, app.settings::setIdeaLayout, settings.ideaSort, app.settings::setIdeaSort,
                         filter, { filter = it },
                     )
                 }
@@ -251,7 +251,8 @@ fun ProjectScreen(id: String, nav: Nav) {
             }
             settings.ideaLayout == IdeaLayout.Board -> item(key = "board") {
                 IdeaBoard(
-                    project.ideas.map { BoardItem(project.id, it, readOnly = !canEdit) },
+                    project.ideas.map { BoardItem(project.id, it, readOnly = !canEdit, columns = columns) },
+                    projectBoard(project),
                     onEdit = { ideaDialog = IdeaDialog(it.idea, projectId = project.id) },
                     onAdd = if (canEdit) ({ ideaDialog = IdeaDialog(status = it, projectId = project.id) }) else null,
                 )
@@ -264,7 +265,7 @@ fun ProjectScreen(id: String, nav: Nav) {
                 ListGroup {
                     ideas.forEachIndexed { i, idea ->
                         if (i > 0) GroupDivider()
-                        IdeaRow(project.id, idea, onEdit = { ideaDialog = IdeaDialog(idea, projectId = project.id) }, onDelete = { ideaToDelete = idea },
+                        IdeaRow(project.id, idea, onEdit = { ideaDialog = IdeaDialog(idea, projectId = project.id) }, onDelete = { ideaToDelete = idea }, columns = columns,
                             readOnly = !canEdit, showAuthor = !owner || project.shareCount > 0)
                     }
                 }
@@ -277,7 +278,7 @@ fun ProjectScreen(id: String, nav: Nav) {
         ProjectFormSheet(project, onDismiss = { editing = false }) { repo.updateProject(project.id, it); toast("Проект сохранён") }
     }
     ideaDialog?.let { d ->
-        IdeaFormSheet(d.idea, onDismiss = { ideaDialog = null }, defaultStatus = d.status, onSubmit = { input ->
+        IdeaFormSheet(d.idea, onDismiss = { ideaDialog = null }, defaultStatus = d.status, columns = project.columns, onSubmit = { input ->
             if (d.idea != null) { repo.updateIdea(project.id, d.idea.id, input); toast("Идея сохранена") }
             else { repo.addIdea(project.id, input); toast("Идея добавлена") }
         })

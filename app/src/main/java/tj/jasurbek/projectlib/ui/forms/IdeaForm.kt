@@ -32,7 +32,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import tj.jasurbek.projectlib.data.Attachment
 import tj.jasurbek.projectlib.data.Idea
-import tj.jasurbek.projectlib.data.IdeaStatus
+import tj.jasurbek.projectlib.data.DEFAULT_STATUSES
+import tj.jasurbek.projectlib.data.StatusDef
+import tj.jasurbek.projectlib.data.of
 import tj.jasurbek.projectlib.data.Priority
 import tj.jasurbek.projectlib.data.Repository.IdeaInput
 import tj.jasurbek.projectlib.data.addDaysISO
@@ -56,12 +58,14 @@ fun IdeaFormSheet(
     initial: Idea?,
     onDismiss: () -> Unit,
     onSubmit: (IdeaInput) -> Unit,
-    /** Status for a new idea (e.g. the kanban column it was added from). */
-    defaultStatus: IdeaStatus = IdeaStatus.New,
+    /** Status for a new idea (e.g. the kanban column it was added from). null = first column. */
+    defaultStatus: String? = null,
+    /** The project's columns. */
+    columns: List<StatusDef> = DEFAULT_STATUSES,
 ) {
     var title by remember { mutableStateOf(initial?.title ?: "") }
     var description by remember { mutableStateOf(initial?.description ?: "") }
-    var status by remember { mutableStateOf(initial?.status ?: defaultStatus) }
+    var status by remember { mutableStateOf(initial?.let { columns.of(it.status).id } ?: defaultStatus ?: columns.first().id) }
     var priority by remember { mutableStateOf(initial?.priority ?: Priority.Medium) }
     var dueDate by remember { mutableStateOf(initial?.dueDate ?: "") }
     var attachments by remember { mutableStateOf<List<Attachment>>(initial?.attachments ?: emptyList()) }
@@ -79,7 +83,11 @@ fun IdeaFormSheet(
     ) {
         DSTextField("Идея", title, { title = it; error = null }, placeholder = "Например, тёмная тема", error = error)
         TextArea("Подробности", description, { description = it }, placeholder = "Необязательно", maxLength = 1000)
-        SelectField("Статус", status, IdeaStatus.entries, { it.label }, { status = it }, leading = { StatusDot(it.tone) })
+        SelectField(
+            "Статус", columns.of(status), columns,
+            { if (it.excluded == true) "${it.label} · вне прогресса" else "${it.label} · ${it.percent}%" },
+            { status = it.id }, leading = { StatusDot(it.dsTone) },
+        )
         Column(verticalArrangement = Arrangement.spacedBy(DSSpace.sm)) {
             Text("Приоритет", style = MaterialTheme.typography.labelLarge, color = DS.colors.textSecondary)
             Row(horizontalArrangement = Arrangement.spacedBy(DSSpace.xs)) {

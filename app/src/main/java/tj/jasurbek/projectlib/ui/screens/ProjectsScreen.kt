@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tj.jasurbek.projectlib.App
 import tj.jasurbek.projectlib.data.DueState
-import tj.jasurbek.projectlib.data.IdeaStatus
+import tj.jasurbek.projectlib.data.of
 import tj.jasurbek.projectlib.data.Project
 import tj.jasurbek.projectlib.data.ProjectStatus
 import tj.jasurbek.projectlib.data.SyncState
@@ -168,9 +168,11 @@ private fun SkeletonCard() {
 @Composable
 fun ProjectCard(p: Project, onOpen: () -> Unit) {
     val prog = p.progress()
-    val active = p.ideas.count { it.status == IdeaStatus.InProgress }
+    val columns = p.columns
+    // "In progress": ideas in a started column (0 % < percent < 100 %) that counts toward progress.
+    val active = p.ideas.count { val s = columns.of(it.status); s.excluded != true && s.percent in 1..99 }
     val today = todayISO()
-    val overdue = p.ideas.count { it.dueState(today) == DueState.Overdue }
+    val overdue = p.ideas.count { it.dueState(columns, today) == DueState.Overdue }
     DSCard(onClick = onOpen) {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpace.md)) {
             Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(DSSpace.md)) {

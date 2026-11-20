@@ -18,15 +18,57 @@ enum class ProjectStatus(val label: String, val tone: DSTone) {
     @SerialName("archived") Archived("Архив", DSTone.Neutral),
 }
 
-@Serializable
-enum class IdeaStatus(val label: String, val tone: DSTone) {
-    @SerialName("new") New("Новая", DSTone.Neutral),
-    @SerialName("planned") Planned("Запланировано", DSTone.Info),
-    @SerialName("in_progress") InProgress("В процессе", DSTone.Warning),
-    @SerialName("paused") Paused("На паузе", DSTone.Neutral),
-    @SerialName("done") Done("Выполнено", DSTone.Success),
-    @SerialName("dropped") Dropped("Отменено", DSTone.Danger),
+/**
+ * An idea's status is the id of a column (StatusDef) of its project — projects can have their own columns.
+ * These are the ids of the default columns (the original fixed statuses).
+ */
+object IdeaStatus {
+    const val New = "new"
+    const val Planned = "planned"
+    const val InProgress = "in_progress"
+    const val Paused = "paused"
+    const val Done = "done"
+    const val Dropped = "dropped"
 }
+
+@Serializable
+enum class StatusTone(val ds: DSTone) {
+    @SerialName("neutral") Neutral(DSTone.Neutral),
+    @SerialName("info") Info(DSTone.Info),
+    @SerialName("success") Success(DSTone.Success),
+    @SerialName("warning") Warning(DSTone.Warning),
+    @SerialName("danger") Danger(DSTone.Danger),
+}
+
+/**
+ * A board column of a project (port of StatusDef in src/lib/types.ts). [percent] is how far an idea in this
+ * column counts toward "Прогресс идей" (100 = done); [excluded] columns are left out of progress.
+ */
+@Serializable
+data class StatusDef(
+    val id: String,
+    val name: String,
+    val tone: StatusTone = StatusTone.Neutral,
+    val percent: Int = 0,
+    val excluded: Boolean? = null,
+) {
+    val label get() = name
+    val dsTone get() = tone.ds
+    /** Done (100 %) or excluded from progress — no deadline warnings, struck through. */
+    val isClosed get() = excluded == true || percent >= 100
+}
+
+val DEFAULT_STATUSES = listOf(
+    StatusDef(IdeaStatus.New, "Новая", StatusTone.Neutral, 0),
+    StatusDef(IdeaStatus.Planned, "Запланировано", StatusTone.Info, 10),
+    StatusDef(IdeaStatus.InProgress, "В процессе", StatusTone.Warning, 50),
+    StatusDef(IdeaStatus.Paused, "На паузе", StatusTone.Neutral, 50),
+    StatusDef(IdeaStatus.Done, "Выполнено", StatusTone.Success, 100),
+    StatusDef(IdeaStatus.Dropped, "Отменено", StatusTone.Danger, 0, excluded = true),
+)
+
+/** The column of [id]; an unknown id (column deleted on another device) shows in the first column. */
+fun List<StatusDef>.of(id: String): StatusDef = firstOrNull { it.id == id } ?: first()
 
 @Serializable
 enum class Priority(val label: String, val tone: DSTone) {
@@ -123,7 +165,8 @@ data class Idea(
     val id: String,
     val title: String,
     val description: String = "",
-    val status: IdeaStatus = IdeaStatus.New,
+    /** Column id in the project's [Project.columns]. */
+    val status: String = IdeaStatus.New,
     val priority: Priority = Priority.Medium,
     /** Deadline as a local calendar date "YYYY-MM-DD"; null / "" = none. */
     val dueDate: String? = null,
@@ -136,7 +179,6 @@ data class Idea(
     val createdAt: Long,
     val updatedAt: Long,
 ) {
-    val isOpen get() = status != IdeaStatus.Done && status != IdeaStatus.Dropped
     /** Sort key for manual order; ideas never dragged fall back to "newest first". */
     val sortOrder get() = order ?: -createdAt.toDouble()
 }
@@ -158,7 +200,10 @@ data class Project(
     val access: Access? = null,
     /** Who else has access — only sent to the owner and admins. */
     val shares: List<Share>? = null,
+    /** Board columns. null / empty = DEFAULT_STATUSES. */
+    val statuses: List<StatusDef>? = null,
 ) {
+    val columns: List<StatusDef> get() = statuses?.takeIf { it.isNotEmpty() } ?: DEFAULT_STATUSES
     val launchLinks get() = links.filter { it.kind.launchable }
     private val rights get() = access ?: Access.Owner
     val canEdit get() = rights != Access.View
@@ -170,12 +215,15 @@ data class Project(
 
 data class Progress(val done: Int, val total: Int, val percent: Int)
 
-/** Ideas that count toward progress (dropped ideas are excluded). */
+/** "Прогресс идей": the average column percent of the ideas (excluded columns don't count); done = 100 % columns. */
 fun Project.progress(): Progress {
-    val relevant = ideas.filter { it.status != IdeaStatus.Dropped }
-    val done = relevant.count { it.status == IdeaStatus.Done }
-    return Progress(done, relevant.size, if (relevant.isEmpty()) 0 else Math.round(done * 100f / relevant.size))
+    val relevant = ideas.map { columns.of(it.status) }.filter { it.excluded != true }
+    val done = relevant.count { it.percent >= 100 }
+    val sum = relevant.sumOf { it.percent.coerceIn(0, 100) }
+    return Progress(done, relevant.size, if (relevant.isEmpty()) 0 else Math.round(sum.toFloat() / relevant.size))
 }
+
+fun Idea.isOpenIn(columns: List<StatusDef>) = !columns.of(status).isClosed
 
 val byIdeaOrder = compareBy<Idea> { it.sortOrder }
 
@@ -184,10 +232,10 @@ fun addDaysISO(days: Long): String = LocalDate.now().plusDays(days).toString()
 
 enum class DueState { Overdue, Today, Soon, Later }
 
-/** Deadline state of an open idea (done / dropped ideas have none). */
-fun Idea.dueState(today: String = todayISO()): DueState? {
+/** Deadline state of an open idea (ideas in done / excluded columns have none). */
+fun Idea.dueState(columns: List<StatusDef> = DEFAULT_STATUSES, today: String = todayISO()): DueState? {
     val d = dueDate
-    if (d.isNullOrEmpty() || !isOpen) return null
+    if (d.isNullOrEmpty() || !isOpenIn(columns)) return null
     return when {
         d < today -> DueState.Overdue
         d == today -> DueState.Today
