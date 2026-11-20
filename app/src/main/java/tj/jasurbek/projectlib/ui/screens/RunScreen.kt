@@ -45,6 +45,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.size
+import tj.jasurbek.projectlib.ui.designsystem.glass.dsGlass
+import tj.jasurbek.projectlib.ui.designsystem.glass.dsGlassPress
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tj.jasurbek.projectlib.App
 import tj.jasurbek.projectlib.ui.designsystem.DS
@@ -80,7 +84,7 @@ fun RunScreen(projectId: String, linkId: String, onBack: () -> Unit) {
         ) {
             ToolbarButton(Icons.AutoMirrored.Rounded.ArrowBack, "Назад к проекту", onClick = onBack)
             Column(
-                Modifier.weight(1f).heightIn(min = 44.dp).clip(CircleShape).background(DS.colors.surface).border(1.dp, DS.colors.border, CircleShape)
+                Modifier.weight(1f).heightIn(min = 48.dp).dsGlass(CircleShape)
                     .padding(horizontal = DSSpace.lg, vertical = DSSpace.xs),
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -143,13 +147,12 @@ fun RunScreen(projectId: String, linkId: String, onBack: () -> Unit) {
 
 @Composable
 private fun ToolbarButton(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, prominent: Boolean = false, onClick: () -> Unit) {
-    FilledTonalIconButton(
-        onClick = onClick,
-        colors = IconButtonDefaults.filledTonalIconButtonColors(
-            containerColor = if (prominent) DS.colors.accentSubtle else DS.colors.surface,
-            contentColor = if (prominent) DS.colors.accentText else DS.colors.textPrimary,
-        ),
-        modifier = Modifier.border(1.dp, DS.colors.border, CircleShape),
-    ) { Icon(icon, label) }
+    // Round glass buttons of the navigation layer; prominent = accent-tinted glass ("open in browser").
+    if (!prominent) { tj.jasurbek.projectlib.ui.common.GlassIconButton(icon, label, onClick); return }
+    Box(
+        Modifier.size(48.dp).dsGlass(CircleShape, prominent = true).dsGlassPress()
+            .clickable(role = androidx.compose.ui.semantics.Role.Button, onClickLabel = label, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) { Icon(icon, label, tint = DS.colors.textOnAccent, modifier = Modifier.size(22.dp)) }
 }
 

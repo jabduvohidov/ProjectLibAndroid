@@ -14,10 +14,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material3.AlertDialog
+import tj.jasurbek.projectlib.ui.common.GlassAlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import tj.jasurbek.projectlib.ui.common.GlassDropdown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -61,7 +62,7 @@ fun ShareDialog(project: Project, onClose: () -> Unit) {
     val others = auth.people.filter { it.id != auth.me?.id && it.id != project.ownerId }
     fun levelOf(userId: String) = project.shares?.find { it.userId == userId }?.access
 
-    AlertDialog(
+    GlassAlertDialog(
         onDismissRequest = onClose, shape = MaterialTheme.shapes.extraLarge, containerColor = DS.colors.surface,
         title = { Text("Доступ к «${project.name}»", style = MaterialTheme.typography.titleLarge) },
         text = {
@@ -84,7 +85,7 @@ fun ShareDialog(project: Project, onClose: () -> Unit) {
                                     Text(level?.label ?: "Нет доступа", color = if (level == null) DS.colors.textSecondary else DS.colors.accentText, style = MaterialTheme.typography.labelLarge)
                                     Icon(Icons.Rounded.KeyboardArrowDown, "Доступ для ${p.name}", tint = DS.colors.textTertiary, modifier = Modifier.size(18.dp))
                                 }
-                                DropdownMenu(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
+                                GlassDropdown(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
                                     (listOf<ShareAccess?>(null) + ShareAccess.entries).forEach { a ->
                                         DropdownMenuItem(
                                             text = { Text(a?.label ?: "Нет доступа") },

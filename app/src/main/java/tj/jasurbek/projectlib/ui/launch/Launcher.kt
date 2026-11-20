@@ -33,9 +33,10 @@ import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.QrCode2
 import androidx.compose.material.icons.rounded.Storefront
 import androidx.compose.material.icons.rounded.Terminal
-import androidx.compose.material3.AlertDialog
+import tj.jasurbek.projectlib.ui.common.GlassAlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import tj.jasurbek.projectlib.ui.common.GlassDropdown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -162,7 +163,7 @@ fun LaunchProvider(openEmbedded: (String, String) -> Unit, content: @Composable 
         content()
         when (val d = dialog) {
             is LaunchDialog.Qr -> QrDialog(d, onClose = { dialog = null })
-            is LaunchDialog.NotOpened -> AlertDialog(
+            is LaunchDialog.NotOpened -> GlassAlertDialog(
                 onDismissRequest = { dialog = null },
                 shape = MaterialTheme.shapes.extraLarge,
                 containerColor = DS.colors.surface,
@@ -192,7 +193,7 @@ private fun QrDialog(d: LaunchDialog.Qr, onClose: () -> Unit) {
     val context = LocalContext.current
     val toast = LocalToast.current
     val bitmap = remember(d.url) { qrBitmap(d.url, 720) }
-    AlertDialog(
+    GlassAlertDialog(
         onDismissRequest = onClose,
         shape = MaterialTheme.shapes.extraLarge,
         containerColor = DS.colors.surface,
@@ -251,10 +252,8 @@ fun LaunchButton(project: Project, link: Link? = null, compact: Boolean = false)
         )
         if (options.size > 1) {
             Box {
-                androidx.compose.material3.IconButton(onClick = { menu = true }) {
-                    Icon(Icons.Rounded.KeyboardArrowDown, "Другие способы запуска", tint = DS.colors.accentText)
-                }
-                DropdownMenu(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
+                tj.jasurbek.projectlib.ui.common.ContentIconButton(Icons.Rounded.KeyboardArrowDown, "Другие способы запуска", DS.colors.accentText) { menu = true }
+                GlassDropdown(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
                     options.forEach { o ->
                         DropdownMenuItem(
                             leadingIcon = { Icon(MODE_ICON.getValue(o.mode), null, tint = DS.colors.accentText) },

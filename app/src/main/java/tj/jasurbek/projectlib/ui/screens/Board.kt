@@ -201,9 +201,7 @@ private fun BoardColumn(
             Text(status.name, style = MaterialTheme.typography.labelLarge, color = DS.colors.textPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Text("${cards.size}", style = MaterialTheme.typography.labelLarge, color = DS.colors.textTertiary, modifier = Modifier.weight(1f))
             if (onAdd != null) {
-                IconButton(onClick = { onAdd(status.key) }, modifier = Modifier.size(36.dp)) {
-                    Icon(Icons.Rounded.Add, "Добавить идею в «${status.name}»", tint = DS.colors.textSecondary)
-                }
+                tj.jasurbek.projectlib.ui.common.ContentIconButton(Icons.Rounded.Add, "Добавить идею в «${status.name}»") { onAdd(status.key) }
             } else Box(Modifier.size(36.dp))
         }
         if (cards.isEmpty()) {

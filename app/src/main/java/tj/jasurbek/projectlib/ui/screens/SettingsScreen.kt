@@ -116,6 +116,45 @@ fun SettingsScreen(nav: Nav) {
                         listOf(ThemePref.Light to "Светлая", ThemePref.Dark to "Тёмная", ThemePref.System to "Системная"),
                         settings.theme, app.settings::setTheme,
                     )
+                    Spacer(Modifier.height(DSSpace.lg))
+                    // Liquid Glass on/off; on devices that can't afford it, the kit keeps it off and says why.
+                    val device = tj.jasurbek.projectlib.ui.designsystem.glass.rememberDSGlassAvailability()
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpace.md)) {
+                        Column(Modifier.weight(1f)) {
+                            Text("Эффекты стекла", style = MaterialTheme.typography.bodyLarge, color = DS.colors.textPrimary)
+                            Text(
+                                when {
+                                    !device.enabled -> "Недоступно на этом устройстве: ${glassReason(device.reason)}"
+                                    settings.glass -> "Панели, кнопки и меню — Liquid Glass"
+                                    else -> "Сплошные панели — быстрее и экономнее"
+                                },
+                                style = MaterialTheme.typography.bodySmall, color = DS.colors.textSecondary,
+                            )
+                        }
+                        androidx.compose.material3.Switch(
+                            checked = settings.glass && device.enabled, enabled = device.enabled, onCheckedChange = app.settings::setGlass,
+                            colors = androidx.compose.material3.SwitchDefaults.colors(
+                                checkedTrackColor = DS.colors.accent, checkedThumbColor = DS.colors.textOnAccent,
+                                uncheckedTrackColor = DS.colors.fill, uncheckedThumbColor = DS.colors.surfaceRaised, uncheckedBorderColor = DS.colors.borderStrong,
+                            ),
+                        )
+                    }
+                    Spacer(Modifier.height(DSSpace.md))
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpace.md)) {
+                        Column(Modifier.weight(1f)) {
+                            Text("Стеклянные кнопки в контенте", style = MaterialTheme.typography.bodyLarge, color = DS.colors.textPrimary)
+                            Text("Кнопки, чипы и переключатели внутри карточек. Дизайн-система оставляет их сплошными.",
+                                style = MaterialTheme.typography.bodySmall, color = DS.colors.textSecondary)
+                        }
+                        androidx.compose.material3.Switch(
+                            checked = settings.contentGlass && settings.glass && device.enabled, enabled = settings.glass && device.enabled,
+                            onCheckedChange = app.settings::setContentGlass,
+                            colors = androidx.compose.material3.SwitchDefaults.colors(
+                                checkedTrackColor = DS.colors.accent, checkedThumbColor = DS.colors.textOnAccent,
+                                uncheckedTrackColor = DS.colors.fill, uncheckedThumbColor = DS.colors.surfaceRaised, uncheckedBorderColor = DS.colors.borderStrong,
+                            ),
+                        )
+                    }
                 }
             }
         }
@@ -306,3 +345,10 @@ fun ServerForm(initialUrl: String, initialToken: String, onCancel: (() -> Unit)?
     }
 }
 
+private fun glassReason(reason: String) = when (reason) {
+    "Android 11 or older" -> "нужен Android 12 или новее"
+    "low-RAM device" -> "мало оперативной памяти"
+    "battery saver on" -> "включена экономия заряда"
+    "system blur disabled" -> "размытие отключено в системе"
+    else -> reason
+}

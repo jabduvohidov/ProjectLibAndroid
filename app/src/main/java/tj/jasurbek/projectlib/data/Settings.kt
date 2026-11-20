@@ -26,6 +26,10 @@ class Settings(context: Context) {
         val theme: ThemePref,
         val ideaLayout: IdeaLayout,
         val ideaSort: IdeaSort,
+        /** Liquid Glass on the navigation layer (it still turns itself off on devices that can't afford it). */
+        val glass: Boolean,
+        /** ProjectLib extra: glass also on buttons / chips inside the content (the design system keeps them solid). */
+        val contentGlass: Boolean,
     )
 
     private val _state = MutableStateFlow(read())
@@ -40,6 +44,8 @@ class Settings(context: Context) {
         theme = enumOr(prefs.getString("theme", null), ThemePref.System),
         ideaLayout = enumOr(prefs.getString("ideaLayout", null), IdeaLayout.List),
         ideaSort = enumOr(prefs.getString("ideaSort", null), IdeaSort.Order),
+        glass = prefs.getBoolean("glass", true),
+        contentGlass = prefs.getBoolean("contentGlass", true),
     )
 
     private inline fun <reified E : Enum<E>> enumOr(name: String?, fallback: E): E =
@@ -66,6 +72,8 @@ class Settings(context: Context) {
     fun putCache(key: String, value: String?) { prefs.edit().apply { if (value == null) remove("cache.$key") else putString("cache.$key", value) }.apply() }
     fun skipSetup() = edit { putBoolean("onboarded", true) }
     fun setTheme(t: ThemePref) = edit { putString("theme", t.name) }
+    fun setGlass(on: Boolean) = edit { putBoolean("glass", on) }
+    fun setContentGlass(on: Boolean) = edit { putBoolean("contentGlass", on) }
     fun setIdeaLayout(l: IdeaLayout) = edit { putString("ideaLayout", l.name) }
     fun setIdeaSort(s: IdeaSort) = edit { putString("ideaSort", s.name) }
 

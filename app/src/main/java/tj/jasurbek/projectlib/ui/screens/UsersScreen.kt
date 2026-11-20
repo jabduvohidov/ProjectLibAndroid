@@ -22,11 +22,13 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Link
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.VerifiedUser
-import androidx.compose.material3.AlertDialog
+import tj.jasurbek.projectlib.ui.common.GlassAlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import tj.jasurbek.projectlib.ui.common.GlassDropdown
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -106,7 +108,7 @@ fun UsersScreen(nav: Nav) {
 
     AppScreen(
         "Люди", nav, subtitle = users?.let { "${it.size} в ProjectLib" },
-        fab = { if (auth.isAdmin) AccentFab("Пригласить") { inviting = true } },
+        fab = { if (auth.isAdmin) AccentFab("Пригласить", Icons.Rounded.PersonAdd) { inviting = true } },
     ) {
         if (auth.me != null && !auth.isAdmin) { item { DSBanner("Только для администратора", tone = DSTone.Warning) }; return@AppScreen }
         error?.let { item(key = "error") { DSBanner("Не удалось загрузить", tone = DSTone.Danger, message = it, actionLabel = "Повторить", onAction = { reload++ }) } }
@@ -191,7 +193,7 @@ private fun UserRow(u: AdminUser, self: Boolean, onRole: (Role) -> Unit, onDisab
                         Text(u.role.label, color = DS.colors.accentText, style = MaterialTheme.typography.labelLarge)
                         Icon(Icons.Rounded.KeyboardArrowDown, "Роль: ${u.role.label}. Изменить", tint = DS.colors.accentText, modifier = Modifier.size(18.dp))
                     }
-                    DropdownMenu(expanded = roleMenu, onDismissRequest = { roleMenu = false }, shape = MaterialTheme.shapes.medium) {
+                    GlassDropdown(expanded = roleMenu, onDismissRequest = { roleMenu = false }, shape = MaterialTheme.shapes.medium) {
                         Role.entries.forEach { r ->
                             DropdownMenuItem(
                                 text = { Column { Text(r.label); Text(r.hint, style = MaterialTheme.typography.bodySmall, color = DS.colors.textSecondary) } },
@@ -205,8 +207,8 @@ private fun UserRow(u: AdminUser, self: Boolean, onRole: (Role) -> Unit, onDisab
             }
         }
         if (!self) Box {
-            IconButton(onClick = { menu = true }) { Icon(Icons.Rounded.MoreVert, "Действия: ${u.name}", tint = DS.colors.textTertiary) }
-            DropdownMenu(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
+            tj.jasurbek.projectlib.ui.common.ContentIconButton(Icons.Rounded.MoreVert, "Действия: ${u.name}", DS.colors.textTertiary) { menu = true }
+            GlassDropdown(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
                 if (u.disabled) DropdownMenuItem(text = { Text("Включить") }, leadingIcon = { Icon(Icons.Rounded.Check, null) }, onClick = { menu = false; onDisable(false) })
                 else DropdownMenuItem(text = { Text("Отключить") }, leadingIcon = { Icon(Icons.Rounded.Block, null) }, onClick = { menu = false; onDisable(true) })
                 HorizontalDivider(color = DS.colors.border)
@@ -228,7 +230,7 @@ private fun InviteDialog(onClose: () -> Unit) {
     var link by remember { mutableStateOf<String?>(null) }
     var busy by remember { mutableStateOf(false) }
 
-    AlertDialog(
+    GlassAlertDialog(
         onDismissRequest = onClose, shape = MaterialTheme.shapes.extraLarge, containerColor = DS.colors.surface,
         title = { Text("Пригласить в ProjectLib", style = MaterialTheme.typography.titleLarge) },
         text = {

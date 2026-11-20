@@ -65,12 +65,21 @@ import tj.jasurbek.projectlib.ui.forms.ProjectFormSheet
 import tj.jasurbek.projectlib.ui.launch.LaunchButton
 import tj.jasurbek.projectlib.ui.launch.PlatformIcons
 
+/**
+ * The screen's one create action. With the tab bar on screen it becomes the round glass "+" next to the bar
+ * (iOS 27, like the search button); without it, the design system's tinted glass FAB. [text] is what TalkBack says.
+ */
 @Composable
-fun AccentFab(text: String, onClick: () -> Unit) {
-    ExtendedFloatingActionButton(
-        onClick = onClick, containerColor = DS.colors.accent, contentColor = DS.colors.textOnAccent, shape = MaterialTheme.shapes.large,
-        icon = { Icon(Icons.Rounded.Add, null) }, text = { Text(text) },
-    )
+fun AccentFab(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector = Icons.Rounded.Add, onClick: () -> Unit) {
+    val slot = tj.jasurbek.projectlib.ui.LocalShell.current.actionSlot
+    if (slot == null) { tj.jasurbek.projectlib.ui.designsystem.glass.DSGlassFab(icon, text, onClick); return }
+    val click = androidx.compose.runtime.rememberUpdatedState(onClick)
+    androidx.compose.runtime.DisposableEffect(slot, text, icon) {
+        val action = tj.jasurbek.projectlib.ui.common.ShellAction(icon, text) { click.value() }
+        slot.value = action
+        // During a screen transition the new screen sets its action first; the old one must not clear it.
+        onDispose { if (slot.value === action) slot.value = null }
+    }
 }
 
 @Composable

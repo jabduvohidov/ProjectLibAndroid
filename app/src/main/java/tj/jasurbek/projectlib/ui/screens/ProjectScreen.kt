@@ -26,6 +26,7 @@ import androidx.compose.material.icons.rounded.Lightbulb
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import tj.jasurbek.projectlib.ui.common.GlassDropdown
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -127,8 +128,8 @@ fun ProjectScreen(id: String, nav: Nav) {
         title = project.name, nav = nav, showBack = true,
         actions = {
             if (hasMenu) Box {
-                IconButton(onClick = { menu = true }) { Icon(Icons.Rounded.MoreVert, "Действия с проектом") }
-                DropdownMenu(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
+                tj.jasurbek.projectlib.ui.common.GlassIconButton(Icons.Rounded.MoreVert, "Действия с проектом") { menu = true }
+                GlassDropdown(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
                     if (canEdit) {
                         DropdownMenuItem(text = { Text("Изменить проект") }, leadingIcon = { Icon(Icons.Rounded.Edit, null) }, onClick = { menu = false; editing = true })
                         HorizontalDivider(color = DS.colors.border)

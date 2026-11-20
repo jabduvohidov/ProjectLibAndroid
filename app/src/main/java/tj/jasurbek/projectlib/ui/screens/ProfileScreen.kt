@@ -30,7 +30,7 @@ import androidx.compose.material.icons.rounded.PersonOff
 import androidx.compose.material.icons.rounded.PhoneAndroid
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material.icons.rounded.Smartphone
-import androidx.compose.material3.AlertDialog
+import tj.jasurbek.projectlib.ui.common.GlassAlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -234,7 +234,7 @@ private fun PairCodeDialog(onClose: () -> Unit) {
     val left = code?.let { maxOf(0L, (it.expiresAt - now) / 1000) } ?: 0L
     val expired = code != null && left == 0L
 
-    AlertDialog(
+    GlassAlertDialog(
         onDismissRequest = onClose, shape = MaterialTheme.shapes.extraLarge, containerColor = DS.colors.surface,
         title = { Text("Подключить телефон", style = MaterialTheme.typography.titleLarge) },
         text = {

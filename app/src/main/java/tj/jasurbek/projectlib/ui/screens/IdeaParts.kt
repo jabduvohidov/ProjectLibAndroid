@@ -18,6 +18,7 @@ import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import tj.jasurbek.projectlib.ui.common.GlassDropdown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -122,11 +123,11 @@ fun IdeasToolbar(
             if (layout == IdeaLayout.List) {
                 var open by remember { mutableStateOf(false) }
                 Box {
-                    TextButton(onClick = { open = true }) {
-                        Icon(Icons.AutoMirrored.Rounded.Sort, null, tint = DS.colors.accentText, modifier = Modifier.padding(end = DSSpace.xs))
-                        Text(sort.label, color = DS.colors.accentText, style = MaterialTheme.typography.labelLarge)
-                    }
-                    DropdownMenu(expanded = open, onDismissRequest = { open = false }, shape = MaterialTheme.shapes.medium) {
+                    tj.jasurbek.projectlib.ui.designsystem.DSButton(
+                        sort.label, { open = true }, variant = tj.jasurbek.projectlib.ui.designsystem.DSButtonVariant.Ghost,
+                        size = tj.jasurbek.projectlib.ui.designsystem.DSButtonSize.Sm, leadingIcon = Icons.AutoMirrored.Rounded.Sort,
+                    )
+                    GlassDropdown(expanded = open, onDismissRequest = { open = false }, shape = MaterialTheme.shapes.medium) {
                         IdeaSort.entries.forEach { s ->
                             DropdownMenuItem(
                                 text = { Text(s.label) },
@@ -201,8 +202,8 @@ fun IdeaRow(
             }
         }
         if (!readOnly) Box {
-            IconButton(onClick = { menu = true }) { Icon(Icons.Rounded.MoreVert, "Действия с идеей", tint = DS.colors.textTertiary) }
-            DropdownMenu(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
+            tj.jasurbek.projectlib.ui.common.ContentIconButton(Icons.Rounded.MoreVert, "Действия с идеей", DS.colors.textTertiary) { menu = true }
+            GlassDropdown(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
                 DropdownMenuItem(text = { Text("Изменить") }, leadingIcon = { Icon(Icons.Rounded.Edit, null) }, onClick = { menu = false; onEdit() })
                 DropdownMenuItem(
                     text = { Text("Удалить", color = DS.colors.danger) }, leadingIcon = { Icon(Icons.Rounded.Delete, null, tint = DS.colors.danger) },

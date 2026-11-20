@@ -52,6 +52,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.zxing.core)
     implementation(libs.androidx.browser)
+    implementation(libs.haze)
+    implementation(libs.haze.glass)
+    implementation(libs.haze.blur)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

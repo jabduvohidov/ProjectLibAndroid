@@ -1,6 +1,34 @@
 package tj.jasurbek.projectlib.ui
 
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import tj.jasurbek.projectlib.ui.common.GlassAlertDialog
+import tj.jasurbek.projectlib.ui.common.GlassMenuHost
+import tj.jasurbek.projectlib.ui.common.GlassMenuLayer
+import tj.jasurbek.projectlib.ui.common.GlassToastHost
+import tj.jasurbek.projectlib.ui.common.GlassTabBar
+import tj.jasurbek.projectlib.ui.common.ShellAction
+import tj.jasurbek.projectlib.ui.common.TabItem
+import androidx.compose.runtime.mutableStateOf
+import tj.jasurbek.projectlib.ui.common.LocalGlassMenuHost
+import tj.jasurbek.projectlib.ui.common.NoGlassMenuHost
+import tj.jasurbek.projectlib.ui.designsystem.glass.DSGlassNavItem
+import tj.jasurbek.projectlib.ui.designsystem.glass.LocalDSContentGlass
+import tj.jasurbek.projectlib.ui.common.glassOn
+import tj.jasurbek.projectlib.ui.designsystem.glass.DSGlassNavigationBar
+import tj.jasurbek.projectlib.ui.designsystem.glass.DSGlassProvider
+import tj.jasurbek.projectlib.ui.designsystem.glass.DSScrollEdgeBottom
+import tj.jasurbek.projectlib.ui.designsystem.glass.rememberDSGlassAvailability
+import tj.jasurbek.projectlib.ui.designsystem.glass.rememberMinimizeOnScroll
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.WindowInsets
@@ -64,6 +92,9 @@ private fun tabs(admin: Boolean) = listOfNotNull(
     Tab("settings", "Настройки", Icons.Rounded.Settings),
 )
 
+/** Room the floating glass tab bar takes above the system navigation (64 capsule + 8 + 8). */
+private val TabBarSpace = 80.dp
+
 private fun NavHostController.switchTab(route: String) = navigate(route) {
     popUpTo(graph.findStartDestination().id) { saveState = true }
     launchSingleTop = true
@@ -93,7 +124,9 @@ fun ProjectLibApp(app: App) {
         // Signed out with nothing on the phone: there is nothing to show, so sign-in comes first (as on the web).
         val signedOut = settings.serverUrl.isNotEmpty() && settings.session.isEmpty() && settings.token.isEmpty() && auth.status?.authRequired != false
         if ((!settings.onboarded || signedOut) && projects.isEmpty() && sync.pending == 0) {
-            SetupScreen()
+            DSGlassProvider(rememberDSGlassAvailability(userOverride = if (settings.glass) null else false)) {
+                CompositionLocalProvider(LocalDSContentGlass provides (settings.contentGlass && glassOn)) { SetupScreen() }
+            }
             return@CompositionLocalProvider
         }
 
@@ -115,65 +148,78 @@ fun ProjectLibApp(app: App) {
             else -> route
         }
 
-        LaunchProvider(openEmbedded = nav.run) {
-            Scaffold(
-                containerColor = DS.colors.bg,
-                // Screens handle their own insets; this Scaffold only reserves room for the bottom bar.
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                snackbarHost = { SnackbarHost(snackbar) },
-                bottomBar = {
-                    // The embedded runner takes the whole screen.
-                    if (!route.startsWith("run")) {
-                        NavigationBar(containerColor = DS.colors.surface) {
-                            tabs(auth.isAdmin).forEach { tab ->
-                                NavigationBarItem(
-                                    selected = activeTab == tab.route,
-                                    onClick = { navController.switchTab(tab.route) },
-                                    icon = { Icon(tab.icon, null) }, label = { Text(tab.label) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = DS.colors.accentText, selectedTextColor = DS.colors.accentText,
-                                        indicatorColor = DS.colors.accentSubtle,
-                                        unselectedIconColor = DS.colors.textTertiary, unselectedTextColor = DS.colors.textTertiary,
-                                    ),
-                                )
-                            }
+        val minimize = rememberMinimizeOnScroll()
+        val actionSlot = remember { mutableStateOf<ShellAction?>(null) }
+        val menus = remember { GlassMenuHost() }
+        val showTabs = !route.startsWith("run")
+        // Liquid Glass shell (universal-design-system, Android glass mode): one glass scope for the window; content
+        // under it is solid, the navigation layer (tab bar, top buttons, FAB, menus, toasts) is glass.
+        DSGlassProvider(rememberDSGlassAvailability(userOverride = if (settings.glass) null else false)) {
+          CompositionLocalProvider(
+              LocalDSContentGlass provides (settings.contentGlass && glassOn),
+              LocalGlassMenuHost provides menus,
+              LocalShell provides ShellInfo(if (showTabs) TabBarSpace else 0.dp, if (showTabs) minimize.connection else null, if (showTabs) actionSlot else null),
+          ) {
+            LaunchProvider(openEmbedded = nav.run) {
+                Box(Modifier.fillMaxSize().background(DS.colors.bg)) {
+                    NavHost(
+                        navController, startDestination = "projects", modifier = Modifier.fillMaxSize(),
+                        enterTransition = { fadeIn() }, exitTransition = { fadeOut() },
+                    ) {
+                        composable("projects") { ProjectsScreen(nav) }
+                        composable("ideas") { IdeasScreen(nav) }
+                        composable("settings") { SettingsScreen(nav) }
+                        composable("profile") { ProfileScreen(nav) }
+                        composable("users") { UsersScreen(nav) }
+                        composable("project/{id}") { e -> ProjectScreen(e.arguments?.getString("id").orEmpty(), nav) }
+                        composable("run/{id}/{linkId}") { e ->
+                            RunScreen(e.arguments?.getString("id").orEmpty(), e.arguments?.getString("linkId").orEmpty(), onBack = nav.back)
                         }
                     }
-                },
-            ) { padding ->
-                NavHost(
-                    navController, startDestination = "projects",
-                    modifier = Modifier.padding(bottom = padding.calculateBottomPadding()).consumeWindowInsets(padding),
-                    enterTransition = { fadeIn() }, exitTransition = { fadeOut() },
-                ) {
-                    composable("projects") { ProjectsScreen(nav) }
-                    composable("ideas") { IdeasScreen(nav) }
-                    composable("settings") { SettingsScreen(nav) }
-                    composable("profile") { ProfileScreen(nav) }
-                    composable("users") { UsersScreen(nav) }
-                    composable("project/{id}") { e -> ProjectScreen(e.arguments?.getString("id").orEmpty(), nav) }
-                    composable("run/{id}/{linkId}") { e ->
-                        RunScreen(e.arguments?.getString("id").orEmpty(), e.arguments?.getString("linkId").orEmpty(), onBack = nav.back)
+
+                    if (showTabs) {
+                        // Content dissolves under the floating capsule instead of hitting a solid bar.
+                        tj.jasurbek.projectlib.ui.common.GlassScrollEdge(fromTop = false,
+                            Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                                .height(TabBarSpace + 48.dp + androidx.compose.foundation.layout.WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()))
+                        GlassTabBar(
+                            tabs(auth.isAdmin).map { TabItem(it.route, it.label, it.icon) },
+                            selectedId = activeTab,
+                            // Same tab on a pushed screen (a project) → back to its list, like iOS; the open list itself → nothing.
+                            onSelect = { minimize.restore(); if (route != it) navController.switchTab(it) },
+                            minimized = minimize.minimized,
+                            onRestore = minimize::restore,
+                            action = actionSlot.value,
+                            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding(),
+                        )
                     }
+                    GlassToastHost(
+                        snackbar,
+                        Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = if (showTabs) TabBarSpace + DSSpace.sm else DSSpace.lg),
+                    )
+                    GlassMenuLayer(menus)
                 }
+
                 // A pairing QR code was opened while the app is already set up: sign in (or switch account) with it.
                 pair?.let { (server, code) ->
-                    AlertDialog(
+                    GlassAlertDialog(
                         onDismissRequest = { app.pendingPair.value = null },
-                        shape = MaterialTheme.shapes.extraLarge, containerColor = DS.colors.bg,
                         title = { Text("Войти по коду", style = MaterialTheme.typography.titleLarge) },
                         text = {
-                            Column(verticalArrangement = Arrangement.spacedBy(DSSpace.sm)) {
-                                if (auth.me != null) Text("Сейчас вы вошли как ${auth.me!!.name}. Вход другим пользователем удалит копию данных с телефона.",
-                                    style = MaterialTheme.typography.bodySmall, color = DS.colors.textSecondary)
-                                CodeSignInForm(server.ifEmpty { app.settings.current.serverUrl }, code,
-                                    onCancel = { app.pendingPair.value = null }, onDone = { app.pendingPair.value = null })
+                            NoGlassMenuHost {
+                                Column(verticalArrangement = Arrangement.spacedBy(DSSpace.sm)) {
+                                    if (auth.me != null) Text("Сейчас вы вошли как ${auth.me!!.name}. Вход другим пользователем удалит копию данных с телефона.",
+                                        style = MaterialTheme.typography.bodySmall, color = DS.colors.textSecondary)
+                                    CodeSignInForm(server.ifEmpty { app.settings.current.serverUrl }, code,
+                                        onCancel = { app.pendingPair.value = null }, onDone = { app.pendingPair.value = null })
+                                }
                             }
                         },
                         confirmButton = {},
                     )
                 }
             }
+          }
         }
     }
 }

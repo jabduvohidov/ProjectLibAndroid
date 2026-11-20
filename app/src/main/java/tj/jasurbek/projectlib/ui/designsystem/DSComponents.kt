@@ -33,6 +33,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import java.math.BigDecimal
+import tj.jasurbek.projectlib.ui.designsystem.glass.DSGlassTint
+import tj.jasurbek.projectlib.ui.designsystem.glass.LocalDSContentGlass
+import tj.jasurbek.projectlib.ui.designsystem.glass.dsControlSurface
+import tj.jasurbek.projectlib.ui.designsystem.glass.dsGlassLook
+import tj.jasurbek.projectlib.ui.designsystem.glass.dsGlassPress
+import tj.jasurbek.projectlib.ui.designsystem.glass.dsPressShrink
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -68,16 +74,29 @@ fun DSButton(
         DSButtonSize.Md -> MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
         DSButtonSize.Lg -> MaterialTheme.typography.titleMedium
     }
+    // ProjectLib: with content glass on, every button is a glass capsule (accent / danger tinted for primary /
+    // destructive); otherwise the kit's solid capsule, which shrinks a little when pressed.
+    val glass = LocalDSContentGlass.current
+    val tint = when (variant) {
+        DSButtonVariant.Primary -> DSGlassTint.Accent
+        DSButtonVariant.Destructive -> DSGlassTint.Danger
+        else -> DSGlassTint.Regular
+    }
+    val active = enabled && !loading
     Button(
         onClick = onClick,
-        enabled = enabled && !loading,
-        modifier = modifier.then(if (fullWidth) Modifier.fillMaxWidth() else Modifier).heightIn(min = size.height),
+        enabled = active,
+        modifier = modifier.then(if (fullWidth) Modifier.fillMaxWidth() else Modifier).heightIn(min = size.height)
+            .then(if (glass) Modifier.alpha(if (active || loading) 1f else 0.4f).dsGlassLook(CircleShape, tint).dsGlassPress(maxLean = 10.dp) else Modifier.dsPressShrink()),
         shape = CircleShape, // capsule controls — same geometry as iOS/macOS 27 and web
-        colors = ButtonDefaults.buttonColors(
+        colors = if (glass) ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent, contentColor = content,
+            disabledContainerColor = Color.Transparent, disabledContentColor = content,
+        ) else ButtonDefaults.buttonColors(
             containerColor = container, contentColor = content,
             disabledContainerColor = container.copy(alpha = container.alpha * 0.4f), disabledContentColor = content.copy(alpha = 0.4f),
         ),
-        border = if (variant == DSButtonVariant.Outline) BorderStroke(1.dp, c.borderStrong) else null,
+        border = if (variant == DSButtonVariant.Outline && !glass) BorderStroke(1.dp, c.borderStrong) else null,
         elevation = null,
         contentPadding = PaddingValues(horizontal = size.hPad),
     ) {
@@ -219,7 +238,9 @@ fun DSBanner(title: String, modifier: Modifier = Modifier, tone: DSTone = DSTone
 @Composable
 fun <T> DSSegmentedControl(options: List<Pair<T, String>>, selected: T, onSelect: (T) -> Unit, modifier: Modifier = Modifier) {
     val c = DS.colors
-    Row(modifier.fillMaxWidth().heightIn(min = DSSize.minTouchAndroid).clip(CircleShape).background(c.fill).padding(DSSpace.xxs)) {
+    // Glass track when content glass is on; the selected segment stays a light solid "lens" on it.
+    val track = if (LocalDSContentGlass.current) Modifier.dsGlassLook(CircleShape) else Modifier.clip(CircleShape).background(c.fill)
+    Row(modifier.fillMaxWidth().heightIn(min = DSSize.minTouchAndroid).then(track).padding(DSSpace.xxs)) {
         options.forEach { (value, label) ->
             val on = value == selected
             Box(
@@ -238,8 +259,10 @@ fun DSChip(text: String, selected: Boolean, onClick: () -> Unit, soft: Boolean =
     val c = DS.colors
     val bg = if (!selected) c.fill else if (soft) c.accentSubtle else c.accent
     val fg = if (!selected) c.textPrimary else if (soft) c.accentText else c.textOnAccent
+    val tint = if (!selected) DSGlassTint.Regular else if (soft) DSGlassTint.AccentSoft else DSGlassTint.Accent
     Box(
-        Modifier.heightIn(min = DSSize.controlSm).clip(CircleShape).background(bg).clickable(onClick = onClick).padding(horizontal = DSSpace.md),
+        Modifier.heightIn(min = DSSize.controlSm).dsControlSurface(CircleShape, tint) { clip(CircleShape).background(bg) }
+            .clickable(onClick = onClick).padding(horizontal = DSSpace.md),
         contentAlignment = Alignment.Center,
     ) { Text(text, style = MaterialTheme.typography.labelLarge, color = fg) }
 }

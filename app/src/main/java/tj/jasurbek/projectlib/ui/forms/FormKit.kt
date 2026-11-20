@@ -24,6 +24,7 @@ import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.UnfoldMore
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import tj.jasurbek.projectlib.ui.common.GlassDropdown
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -67,10 +68,21 @@ fun FormSheet(
     val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     fun close() = scope.launch { state.hide() }.invokeOnCompletion { onDismiss() }
+    // Glass sheet (design system: sheets live on the glass layer): the system blurs the screen behind the sheet's
+    // window, the panel is translucent `glassStrong`; fields and chips inside stay solid. Solid `bg` when glass is off.
     ModalBottomSheet(
         onDismissRequest = onDismiss, sheetState = state,
-        containerColor = DS.colors.bg, shape = MaterialTheme.shapes.extraLarge.let { androidx.compose.foundation.shape.RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp) },
+        containerColor = if (tj.jasurbek.projectlib.ui.common.glassOn) DS.colors.glassStrong else DS.colors.bg,
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+        tonalElevation = 0.dp, scrimColor = DS.colors.overlay.copy(alpha = 0.25f),
+        dragHandle = {
+            Box(Modifier.fillMaxWidth().padding(top = DSSpace.sm, bottom = DSSpace.md), contentAlignment = Alignment.Center) {
+                Box(Modifier.size(36.dp, 5.dp).clip(androidx.compose.foundation.shape.CircleShape).background(DS.colors.borderStrong))
+            }
+        },
     ) {
+        tj.jasurbek.projectlib.ui.common.DialogGlass()
+        tj.jasurbek.projectlib.ui.common.NoGlassMenuHost {
         Column(Modifier.fillMaxWidth().imePadding()) {
             Text(title, style = MaterialTheme.typography.headlineSmall, color = DS.colors.textPrimary, modifier = Modifier.padding(horizontal = DSSpace.xl))
             Spacer(Modifier.size(DSSpace.lg))
@@ -86,6 +98,7 @@ fun FormSheet(
                 DSButton("Отмена", { close() }, Modifier.weight(1f), variant = DSButtonVariant.Secondary)
                 DSButton(submitLabel, { if (onSubmit()) close() }, Modifier.weight(1f))
             }
+        }
         }
     }
 }
@@ -174,7 +187,7 @@ fun <T> SelectField(
                 Text(optionLabel(value), style = MaterialTheme.typography.bodyLarge, color = c.textPrimary, modifier = Modifier.weight(1f))
                 Icon(Icons.Rounded.UnfoldMore, null, tint = c.textTertiary)
             }
-            DropdownMenu(expanded = open, onDismissRequest = { open = false }, shape = MaterialTheme.shapes.medium) {
+            GlassDropdown(expanded = open, onDismissRequest = { open = false }, shape = MaterialTheme.shapes.medium) {
                 options.forEach { o ->
                     DropdownMenuItem(
                         text = { Text(optionLabel(o)) },

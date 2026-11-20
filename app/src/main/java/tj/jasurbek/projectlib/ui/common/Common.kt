@@ -35,7 +35,6 @@ import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Sync
 import androidx.compose.material.icons.rounded.Warning
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -62,6 +61,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.widthIn
+import tj.jasurbek.projectlib.ui.designsystem.glass.dsGlass
+import tj.jasurbek.projectlib.ui.designsystem.glass.DSGlassTint
+import tj.jasurbek.projectlib.ui.designsystem.glass.dsControlSurface
+import tj.jasurbek.projectlib.ui.designsystem.glass.dsGlassPress
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import tj.jasurbek.projectlib.data.DueState
@@ -155,7 +159,7 @@ fun IdeaStatusPicker(columns: List<StatusDef>, status: String, onChange: (String
         ) {
             ToneBadge(cur.label, cur.dsTone, dot = true, trailing = Icons.Rounded.KeyboardArrowDown)
         }
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }, shape = MaterialTheme.shapes.medium) {
+        GlassDropdown(expanded = open, onDismissRequest = { open = false }, shape = MaterialTheme.shapes.medium) {
             columns.forEach { s ->
                 DropdownMenuItem(
                     text = { Text(if (s.excluded == true) "${s.label} · вне прогресса" else "${s.label} · ${s.percent}%") },
@@ -248,7 +252,8 @@ fun CountChip(text: String, selected: Boolean, count: Int? = null, danger: Boole
     val c = DS.colors
     val fg = when { danger -> c.danger; selected -> c.accentText; else -> c.textPrimary }
     Row(
-        Modifier.heightIn(min = DSSize.controlSm).clip(CircleShape).background(if (selected) c.accentSubtle else c.fill)
+        Modifier.heightIn(min = DSSize.controlSm)
+            .dsControlSurface(CircleShape, if (selected) DSGlassTint.AccentSoft else DSGlassTint.Regular) { clip(CircleShape).background(if (selected) c.accentSubtle else c.fill) }
             .clickable(onClick = onClick).padding(horizontal = DSSpace.md),
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp),
     ) {
@@ -282,9 +287,12 @@ fun SyncIcon(info: SyncInfo, syncing: Boolean, tint: Color, size: androidx.compo
     Icon(info.icon, null, tint = tint, modifier = Modifier.size(size).rotate(angle))
 }
 
-/** Top-bar capsule: current sync state; tap = sync now (or open the server settings when sign-in is needed). */
+/**
+ * Top-bar glass capsule: current sync state; tap = sync now (or open the account settings when sign-in is needed).
+ * [compact]: icon only (scrolled bar, pushed screens) unless something needs attention.
+ */
 @Composable
-fun SyncIndicator(status: SyncStatus, onClick: () -> Unit) {
+fun SyncIndicator(status: SyncStatus, compact: Boolean = false, onClick: () -> Unit) {
     val info = describeSync(status)
     val color = when (info.tone) {
         DSTone.Success -> DS.colors.success
@@ -292,16 +300,17 @@ fun SyncIndicator(status: SyncStatus, onClick: () -> Unit) {
         DSTone.Danger -> DS.colors.danger
         else -> DS.colors.textSecondary
     }
+    val showLabel = status.state != SyncState.Synced && !(compact && status.state == SyncState.Syncing)
     Row(
-        Modifier.padding(end = DSSpace.sm).heightIn(min = 36.dp).clip(CircleShape).background(DS.colors.surface)
-            .border(1.dp, DS.colors.border, CircleShape).clickable(onClick = onClick).padding(horizontal = DSSpace.md)
+        Modifier.heightIn(min = 48.dp).widthIn(min = 48.dp).dsGlass(CircleShape).dsGlassPress().clickable(onClick = onClick)
+            .padding(horizontal = if (showLabel) DSSpace.lg else DSSpace.md)
             .semantics { contentDescription = info.label },
-        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpace.xs),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpace.xs, Alignment.CenterHorizontally),
     ) {
-        SyncIcon(info, status.state == SyncState.Syncing, color)
-        // Compact when all is well: the icon alone says "synced".
-        if (status.state != SyncState.Synced) {
-            Text(info.label, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold), color = color, maxLines = 1)
+        SyncIcon(info, status.state == SyncState.Syncing, color, 20.dp)
+        if (showLabel) {
+            Text(info.label, style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold), color = color, maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis, modifier = Modifier.widthIn(max = 150.dp))
         }
     }
 }
@@ -311,7 +320,7 @@ fun SyncIndicator(status: SyncStatus, onClick: () -> Unit) {
 /** Destructive confirmation (danger button + cancel). */
 @Composable
 fun ConfirmDialog(title: String, text: String, confirmLabel: String, onConfirm: () -> Unit, onDismiss: () -> Unit) {
-    AlertDialog(
+    GlassAlertDialog(
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.extraLarge,
         containerColor = DS.colors.surface,
