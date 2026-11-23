@@ -24,6 +24,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ViewColumn
+import androidx.compose.material.icons.rounded.KeyboardArrowDown
+import androidx.compose.material.icons.rounded.Visibility
+import androidx.compose.material.icons.rounded.VisibilityOff
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.stateDescription
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.material.icons.rounded.AttachFile
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -147,17 +153,34 @@ fun IdeaBoard(items: List<BoardItem>, spec: BoardSpec, onEdit: (BoardItem) -> Un
         repo.updateIdea(item.projectId, id) { it.copy(status = status, order = order) }
     }
 
+    // Linear-style "hidden columns": empty columns fold into a compact list after the board (web: projectlib.board.hideEmpty).
+    val settings by App.instance.settings.state.collectAsStateWithLifecycle()
+    val hidden = if (settings.hideEmptyColumns) spec.columns.filter { columns.getValue(it.key).isEmpty() } else emptyList()
+
+    Column(verticalArrangement = Arrangement.spacedBy(DSSpace.sm)) {
+    Row(
+        Modifier.clip(MaterialTheme.shapes.small).clickable(role = Role.Switch) { App.instance.settings.setHideEmptyColumns(!settings.hideEmptyColumns) }
+            .semantics { stateDescription = if (settings.hideEmptyColumns) "Включено" else "Выключено" }
+            .padding(horizontal = DSSpace.sm, vertical = DSSpace.xs),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpace.xs),
+    ) {
+        Icon(if (settings.hideEmptyColumns) Icons.Rounded.Visibility else Icons.Rounded.VisibilityOff, null,
+            tint = DS.colors.textSecondary, modifier = Modifier.size(18.dp))
+        Text(if (settings.hideEmptyColumns) "Показать пустые колонки" else "Скрыть пустые колонки",
+            style = MaterialTheme.typography.labelLarge, color = DS.colors.textSecondary)
+    }
     Row(
         Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
         horizontalArrangement = Arrangement.spacedBy(DSSpace.md),
     ) {
-        spec.columns.forEach { col ->
+        spec.columns.filter { it !in hidden }.forEach { col ->
             BoardColumn(
                 col, spec.columns, columns.getValue(col.key), cardBounds, onEdit, onAdd,
                 onDrop = { id, y -> move(id, col.key, y) },
                 onMove = { id, to -> move(id, to, null) },
             )
         }
+        if (hidden.isNotEmpty()) HiddenColumns(hidden, onAdd, onDrop = { id, to -> move(id, to, null) })
         // Trailing tile (web: "Колонки и проценты…" after the last column) — only for editors of one project.
         if (onConfigure != null) {
             val shape = MaterialTheme.shapes.large
@@ -172,6 +195,63 @@ fun IdeaBoard(items: List<BoardItem>, spec: BoardSpec, onEdit: (BoardItem) -> Un
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center)
             }
         }
+    }
+    }
+}
+
+/** Collapsible "Скрытые колонки" panel; each row is still a drop target, so a card can be moved into an empty column. */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun HiddenColumns(cols: List<BoardCol>, onAdd: ((String) -> Unit)?, onDrop: (id: String, to: String) -> Unit) {
+    var open by remember { mutableStateOf(true) }
+    Column(Modifier.width(232.dp), verticalArrangement = Arrangement.spacedBy(DSSpace.xxs)) {
+        Row(
+            Modifier.fillMaxWidth().clip(MaterialTheme.shapes.small).clickable { open = !open }
+                .semantics { stateDescription = if (open) "Развёрнуто" else "Свёрнуто" }
+                .padding(horizontal = DSSpace.sm, vertical = DSSpace.sm),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpace.xs),
+        ) {
+            Text("Скрытые колонки", style = MaterialTheme.typography.labelLarge, color = DS.colors.textSecondary, modifier = Modifier.weight(1f))
+            Icon(Icons.Rounded.KeyboardArrowDown, null, tint = DS.colors.textTertiary,
+                modifier = Modifier.size(18.dp).graphicsLayer { rotationZ = if (open) 0f else -90f })
+        }
+        if (open) cols.forEach { col -> androidx.compose.runtime.key(col.key) { HiddenRow(col, onAdd, onDrop) } }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun HiddenRow(col: BoardCol, onAdd: ((String) -> Unit)?, onDrop: (id: String, to: String) -> Unit) {
+    var over by remember { mutableStateOf(false) }
+    val target = remember(col.key) {
+        object : DragAndDropTarget {
+            override fun onEntered(event: DragAndDropEvent) { over = true }
+            override fun onExited(event: DragAndDropEvent) { over = false }
+            override fun onEnded(event: DragAndDropEvent) { over = false }
+            override fun onDrop(event: DragAndDropEvent): Boolean {
+                over = false
+                val id = event.toAndroidDragEvent().clipData?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.text?.toString() ?: return false
+                onDrop(id, col.key)
+                return true
+            }
+        }
+    }
+    val shape = MaterialTheme.shapes.small
+    Row(
+        Modifier.fillMaxWidth().heightIn(min = 44.dp).clip(shape)
+            .background(if (over) DS.colors.accentSubtle else DS.colors.fill.copy(alpha = 0.5f))
+            .border(1.dp, if (over) DS.colors.accent else androidx.compose.ui.graphics.Color.Transparent, shape)
+            .dragAndDropTarget(shouldStartDragAndDrop = { it.mimeTypes().contains(MIME) }, target = target)
+            .padding(start = DSSpace.md),
+        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpace.sm),
+    ) {
+        StatusDot(col.tone)
+        Text(col.name, style = MaterialTheme.typography.bodyMedium, color = DS.colors.textPrimary, maxLines = 1,
+            overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+        Text("0", style = MaterialTheme.typography.labelLarge, color = DS.colors.textTertiary)
+        if (onAdd != null) {
+            tj.jasurbek.projectlib.ui.common.ContentIconButton(Icons.Rounded.Add, "Добавить идею в «${col.name}»") { onAdd(col.key) }
+        } else Box(Modifier.size(DSSpace.sm))
     }
 }
 

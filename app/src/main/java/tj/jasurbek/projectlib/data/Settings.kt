@@ -32,6 +32,8 @@ class Settings(context: Context) {
         val contentGlass: Boolean,
         /** Ideas screen: projects picked in the filter (empty = all), remembered on this device. */
         val ideaProjects: List<String>,
+        /** Board: empty columns collapse into the "Скрытые колонки" list (web: projectlib.board.hideEmpty). */
+        val hideEmptyColumns: Boolean,
     )
 
     private val _state = MutableStateFlow(read())
@@ -49,6 +51,7 @@ class Settings(context: Context) {
         glass = prefs.getBoolean("glass", true),
         contentGlass = prefs.getBoolean("contentGlass", true),
         ideaProjects = prefs.getString("ideaProjects", "")!!.split(',').filter { it.isNotEmpty() },
+        hideEmptyColumns = prefs.getBoolean("hideEmptyColumns", false),
     )
 
     private inline fun <reified E : Enum<E>> enumOr(name: String?, fallback: E): E =
@@ -80,6 +83,7 @@ class Settings(context: Context) {
     fun setIdeaLayout(l: IdeaLayout) = edit { putString("ideaLayout", l.name) }
     fun setIdeaSort(s: IdeaSort) = edit { putString("ideaSort", s.name) }
     fun setIdeaProjects(ids: List<String>) = edit { putString("ideaProjects", ids.joinToString(",")) }
+    fun setHideEmptyColumns(on: Boolean) = edit { putBoolean("hideEmptyColumns", on) }
 
     companion object {
         /** "project.lib" → "https://project.lib"; trailing slashes removed. */
