@@ -189,7 +189,7 @@ fun ToneBadge(text: String, tone: DSTone, dot: Boolean = false, leading: ImageVe
     ) {
         if (dot) Box(Modifier.size(6.dp).clip(CircleShape).background(fg))
         if (leading != null) Icon(leading, null, tint = fg, modifier = Modifier.size(12.dp))
-        Text(text, style = MaterialTheme.typography.labelMedium, color = fg)
+        Text(text, style = MaterialTheme.typography.labelMedium, color = fg, maxLines = 1, softWrap = false)
         if (trailing != null) Icon(trailing, null, tint = fg, modifier = Modifier.size(14.dp))
     }
 }

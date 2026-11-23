@@ -206,6 +206,16 @@ class Api(private val settings: Settings) {
     /** Invite links open in the web app: the person creates a passkey there, then pairs this app. */
     fun inviteUrl(token: String) = "${baseUrl().toString().trimEnd('/')}/#/invite/$token"
 
+    /* ---------- column templates (shared by everyone on the server) ---------- */
+
+    suspend fun templates() = json("GET", "api/status-templates", null, ListSerializer(ColumnTemplate.serializer()))
+    suspend fun createTemplate(name: String, statuses: List<StatusDef>) = json(
+        "POST", "api/status-templates",
+        obj("name" to name, "statuses" to AppJson.encodeToJsonElement(ListSerializer(StatusDef.serializer()), statuses)),
+        ColumnTemplate.serializer(),
+    )
+    suspend fun deleteTemplate(id: String) = send("DELETE", "api/status-templates/$id")
+
     /** Share a project: access = null closes it. */
     suspend fun setShare(projectId: String, userId: String, access: ShareAccess?) = send(
         "PUT", "api/projects/$projectId/shares",

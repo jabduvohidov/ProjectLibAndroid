@@ -56,11 +56,20 @@ fun IdeasScreen(nav: Nav) {
     val all = projects.flatMap { p -> p.ideas.map { p to it } }
     val q = query.trim().lowercase()
     fun matchQuery(i: Idea) = q.isEmpty() || i.title.lowercase().contains(q) || i.description.lowercase().contains(q)
-    val groups = projects
+    // Project filter: nothing selected = every project (ids of deleted projects are ignored).
+    val existing = projects.map { it.id }.toSet()
+    val projectIds = settings.ideaProjects.filter { it in existing }
+    fun picked(id: String) = projectIds.isEmpty() || id in projectIds
+    val scoped = all.filter { picked(it.first.id) }
+    val board = settings.ideaLayout == IdeaLayout.Board
+    // Numbers in the picker: ideas of each project that pass search + status filter (board: search only).
+    val counts = projects.associate { p -> p.id to p.ideas.count { matchQuery(it) && (board || filter.matches(it, p.columns)) } }
+    val groups = projects.filter { picked(it.id) }
         .map { p -> p to p.ideas.filter { matchQuery(it) && filter.matches(it, p.columns) }.sortedWith(ideaSorter(settings.ideaSort, p.columns)) }
         .filter { it.second.isNotEmpty() }
 
-    AppScreen(title = "Идеи", nav = nav, subtitle = "${all.size} во всех проектах") {
+    AppScreen(title = "Идеи", nav = nav,
+        subtitle = if (projectIds.isNotEmpty()) "${scoped.size} в выбранных проектах · всего ${all.size}" else "${all.size} во всех проектах") {
         if (all.isEmpty()) {
             item {
                 DSCard {
@@ -74,8 +83,9 @@ fun IdeasScreen(nav: Nav) {
         item(key = "toolbar") {
             Column(verticalArrangement = Arrangement.spacedBy(DSSpace.md)) {
                 SearchField(query, { query = it }, "Поиск по идеям")
+                if (projects.size > 1) ProjectPicker(projects, projectIds, app.settings::setIdeaProjects, counts)
                 IdeasToolbar(
-                    all.map { (p, i) -> i to p.columns }, settings.ideaLayout, app.settings::setIdeaLayout, settings.ideaSort, app.settings::setIdeaSort,
+                    scoped.map { (p, i) -> i to p.columns }, settings.ideaLayout, app.settings::setIdeaLayout, settings.ideaSort, app.settings::setIdeaSort,
                     filter, { filter = it }, allStatusChips = true,
                 )
             }
@@ -83,15 +93,15 @@ fun IdeasScreen(nav: Nav) {
         when {
             settings.ideaLayout == IdeaLayout.Board -> item(key = "board") {
                 IdeaBoard(
-                    all.filter { matchQuery(it.second) }.map { (p, i) -> BoardItem(p.id, i, p.name, readOnly = !p.canEdit, columns = p.columns) },
-                    mergedBoard(projects),
+                    scoped.filter { matchQuery(it.second) }.map { (p, i) -> BoardItem(p.id, i, p.name, readOnly = !p.canEdit, columns = p.columns) },
+                    mergedBoard(projects.filter { picked(it.id) }),
                     onEdit = { editing = Target(it.projectId, it.idea) },
                 )
             }
             groups.isEmpty() -> item(key = "none") {
                 DSCard {
                     DSEmptyState(Icons.Rounded.SearchOff, "Ничего не найдено", "Попробуйте другой запрос или фильтр.",
-                        actionLabel = "Сбросить", onAction = { query = ""; filter = IdeaFilter.All })
+                        actionLabel = "Сбросить", onAction = { query = ""; filter = IdeaFilter.All; app.settings.setIdeaProjects(emptyList()) })
                     Spacer(Modifier.height(DSSpace.lg))
                 }
             }

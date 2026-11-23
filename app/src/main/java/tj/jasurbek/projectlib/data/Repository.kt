@@ -162,6 +162,29 @@ class Repository(context: Context, private val settings: Settings, val api: Api)
 
     fun deleteProject(id: String) = enqueue(Op.ProjectDelete(uid(), System.currentTimeMillis(), id))
 
+    /**
+     * Saves a project's board columns (port of ColumnsDialog.save): ideas of removed columns first move to
+     * [moveTo] (old column id → new column id), then the columns are stored — unchanged standard columns as none.
+     * Returns how many ideas moved.
+     */
+    fun saveColumns(projectId: String, columns: List<StatusDef>, moveTo: Map<String, String>): Int {
+        val cur = project(projectId) ?: return 0
+        val original = cur.columns
+        var moved = 0
+        for (idea in cur.ideas) {
+            val col = original.of(idea.status)
+            if (columns.any { it.id == col.id }) continue
+            val target = moveTo[col.id] ?: nearestStatus(col, columns)?.id ?: continue
+            if (target != idea.status) { updateIdea(projectId, idea.id) { it.copy(status = target) }; moved++ }
+        }
+        val stored = if (isDefaultColumns(columns)) emptyList() else columns
+        val next = cur.copy(statuses = stored)
+        diffFields(cur.copy(ideas = emptyList()), next.copy(ideas = emptyList()), PROJECT_FIELDS)?.let {
+            enqueue(Op.ProjectPatch(uid(), System.currentTimeMillis(), projectId, it))
+        }
+        return moved
+    }
+
     /** First position in a status column (new ideas and cards dropped on top go there). */
     fun topOrder(projectId: String?, status: String): Double {
         val ideas = _projects.value.filter { projectId == null || it.id == projectId }.flatMap { it.ideas }.filter { it.status == status }

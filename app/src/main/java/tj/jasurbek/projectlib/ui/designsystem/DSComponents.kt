@@ -212,7 +212,7 @@ fun DSBadge(text: String, tone: DSTone = DSTone.Neutral, dot: Boolean = false) {
         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpace.xs),
     ) {
         if (dot) Box(Modifier.size(6.dp).clip(CircleShape).background(t.fg))
-        Text(text, style = MaterialTheme.typography.labelMedium, color = t.fg)
+        Text(text, style = MaterialTheme.typography.labelMedium, color = t.fg, maxLines = 1, softWrap = false)
     }
 }
 

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.Group
 import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material.icons.rounded.ViewColumn
 import androidx.compose.material.icons.rounded.FolderOff
 import androidx.compose.material.icons.rounded.Lightbulb
 import androidx.compose.material.icons.rounded.MoreVert
@@ -102,6 +103,7 @@ fun ProjectScreen(id: String, nav: Nav) {
     var filter by remember { mutableStateOf(IdeaFilter.Open) }
     var menu by remember { mutableStateOf(false) }
     var sharing by remember { mutableStateOf(false) }
+    var configuring by remember { mutableStateOf(false) }
     val auth by app.auth.state.collectAsStateWithLifecycle()
 
     if (project == null) {
@@ -132,6 +134,7 @@ fun ProjectScreen(id: String, nav: Nav) {
                 GlassDropdown(expanded = menu, onDismissRequest = { menu = false }, shape = MaterialTheme.shapes.medium) {
                     if (canEdit) {
                         DropdownMenuItem(text = { Text("Изменить проект") }, leadingIcon = { Icon(Icons.Rounded.Edit, null) }, onClick = { menu = false; editing = true })
+                        DropdownMenuItem(text = { Text("Колонки и проценты…") }, leadingIcon = { Icon(Icons.Rounded.ViewColumn, null) }, onClick = { menu = false; configuring = true })
                         HorizontalDivider(color = DS.colors.border)
                         ProjectStatus.entries.forEach { s ->
                             DropdownMenuItem(
@@ -233,7 +236,7 @@ fun ProjectScreen(id: String, nav: Nav) {
         // Ideas
         item(key = "ideas-header") {
             Column(verticalArrangement = Arrangement.spacedBy(DSSpace.md)) {
-                DSSectionHeader("Идеи · ${project.ideas.size}")
+                DSSectionHeader("Идеи · ${project.ideas.size}", actionLabel = if (canEdit) "Колонки" else null, onAction = { configuring = true })
                 if (project.ideas.isNotEmpty()) {
                     IdeasToolbar(
                         project.ideas.map { it to columns }, settings.ideaLayout, app.settings::setIdeaLayout, settings.ideaSort, app.settings::setIdeaSort,
@@ -256,6 +259,7 @@ fun ProjectScreen(id: String, nav: Nav) {
                     projectBoard(project),
                     onEdit = { ideaDialog = IdeaDialog(it.idea, projectId = project.id) },
                     onAdd = if (canEdit) ({ ideaDialog = IdeaDialog(status = it, projectId = project.id) }) else null,
+                    onConfigure = if (canEdit) ({ configuring = true }) else null,
                 )
             }
             ideas.isEmpty() -> item(key = "ideas-none") {
@@ -275,6 +279,7 @@ fun ProjectScreen(id: String, nav: Nav) {
     }
 
     if (sharing && manage) ShareDialog(project, onClose = { sharing = false })
+    if (configuring && canEdit) tj.jasurbek.projectlib.ui.forms.ColumnsSheet(project, onDismiss = { configuring = false })
     if (editing) {
         ProjectFormSheet(project, onDismiss = { editing = false }) { repo.updateProject(project.id, it); toast("Проект сохранён") }
     }

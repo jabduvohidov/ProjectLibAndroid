@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ViewColumn
 import androidx.compose.material.icons.rounded.AttachFile
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -120,7 +121,7 @@ private const val MIME = "application/x-projectlib-idea"
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun IdeaBoard(items: List<BoardItem>, spec: BoardSpec, onEdit: (BoardItem) -> Unit, onAdd: ((String) -> Unit)? = null) {
+fun IdeaBoard(items: List<BoardItem>, spec: BoardSpec, onEdit: (BoardItem) -> Unit, onAdd: ((String) -> Unit)? = null, onConfigure: (() -> Unit)? = null) {
     val repo = App.instance.repo
     val toast = LocalToast.current
     val byId = items.associateBy { it.idea.id }
@@ -156,6 +157,20 @@ fun IdeaBoard(items: List<BoardItem>, spec: BoardSpec, onEdit: (BoardItem) -> Un
                 onDrop = { id, y -> move(id, col.key, y) },
                 onMove = { id, to -> move(id, to, null) },
             )
+        }
+        // Trailing tile (web: "Колонки и проценты…" after the last column) — only for editors of one project.
+        if (onConfigure != null) {
+            val shape = MaterialTheme.shapes.large
+            Column(
+                Modifier.width(160.dp).heightIn(min = 160.dp).clip(shape).border(1.dp, DS.colors.border, shape)
+                    .clickable(onClick = onConfigure).padding(DSSpace.lg),
+                verticalArrangement = Arrangement.spacedBy(DSSpace.sm, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Icon(Icons.Rounded.ViewColumn, null, tint = DS.colors.textTertiary)
+                Text("Колонки и проценты…", style = MaterialTheme.typography.labelLarge, color = DS.colors.textSecondary,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+            }
         }
     }
 }
@@ -210,10 +225,10 @@ private fun BoardColumn(
                 modifier = Modifier.fillMaxWidth().padding(vertical = DSSpace.xl), textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
         }
-        cards.forEach { item ->
+        cards.forEach { item -> androidx.compose.runtime.key(item.projectId, item.idea.id) {
             BoardCard(item, all.filter { it.key != status.key }, onClick = { onEdit(item) }, onMove = { to -> onMove(item.idea.id, to) },
                 modifier = Modifier.onGloballyPositioned { c -> val b = c.boundsInRoot(); cardBounds[item.idea.id] = b.top..b.bottom })
-        }
+        } }
     }
 }
 

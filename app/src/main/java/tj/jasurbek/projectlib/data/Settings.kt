@@ -30,6 +30,8 @@ class Settings(context: Context) {
         val glass: Boolean,
         /** ProjectLib extra: glass also on buttons / chips inside the content (the design system keeps them solid). */
         val contentGlass: Boolean,
+        /** Ideas screen: projects picked in the filter (empty = all), remembered on this device. */
+        val ideaProjects: List<String>,
     )
 
     private val _state = MutableStateFlow(read())
@@ -46,6 +48,7 @@ class Settings(context: Context) {
         ideaSort = enumOr(prefs.getString("ideaSort", null), IdeaSort.Order),
         glass = prefs.getBoolean("glass", true),
         contentGlass = prefs.getBoolean("contentGlass", true),
+        ideaProjects = prefs.getString("ideaProjects", "")!!.split(',').filter { it.isNotEmpty() },
     )
 
     private inline fun <reified E : Enum<E>> enumOr(name: String?, fallback: E): E =
@@ -76,6 +79,7 @@ class Settings(context: Context) {
     fun setContentGlass(on: Boolean) = edit { putBoolean("contentGlass", on) }
     fun setIdeaLayout(l: IdeaLayout) = edit { putString("ideaLayout", l.name) }
     fun setIdeaSort(s: IdeaSort) = edit { putString("ideaSort", s.name) }
+    fun setIdeaProjects(ids: List<String>) = edit { putString("ideaProjects", ids.joinToString(",")) }
 
     companion object {
         /** "project.lib" → "https://project.lib"; trailing slashes removed. */
