@@ -75,7 +75,7 @@ fun SettingsScreen(nav: Nav) {
     val app = App.instance
     val repo = app.repo
     val settings by app.settings.state.collectAsStateWithLifecycle()
-    val projects by repo.projects.collectAsStateWithLifecycle()
+    val projects by repo.shownProjects.collectAsStateWithLifecycle()
     val sync by repo.status.collectAsStateWithLifecycle()
     val toast = LocalToast.current
     val context = LocalContext.current
@@ -225,6 +225,12 @@ fun SettingsScreen(nav: Nav) {
                             subtitle = "Удалит копию данных с телефона", onClick = { confirm = "signout" })
                     }
                 }
+            }
+        }
+
+        item(key = "secret") {
+            Section("Секретные проекты", "Пароль хранится только на этом телефоне. Можно также открывать отпечатком.") {
+                ListGroup { tj.jasurbek.projectlib.ui.common.SecretPasswordRow() }
             }
         }
 

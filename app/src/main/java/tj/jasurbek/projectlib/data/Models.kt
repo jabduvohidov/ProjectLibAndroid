@@ -205,6 +205,8 @@ data class Project(
     val shares: List<Share>? = null,
     /** Board columns. null / empty = DEFAULT_STATUSES. */
     val statuses: List<StatusDef>? = null,
+    /** Secret: owner only (never shared, hidden from admins); hidden in the app until unlocked (SecretLock). */
+    val secret: Boolean? = null,
 ) {
     val columns: List<StatusDef> get() = statuses?.takeIf { it.isNotEmpty() } ?: DEFAULT_STATUSES
     val launchLinks get() = links.filter { it.kind.launchable }

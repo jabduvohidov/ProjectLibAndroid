@@ -91,7 +91,7 @@ data class IdeaDialog(val idea: Idea? = null, val status: String? = null, val pr
 fun ProjectScreen(id: String, nav: Nav) {
     val app = App.instance
     val repo = app.repo
-    val projects by repo.projects.collectAsStateWithLifecycle()
+    val projects by repo.shownProjects.collectAsStateWithLifecycle()
     val settings by app.settings.state.collectAsStateWithLifecycle()
     val toast = LocalToast.current
     val project = projects.find { it.id == id }
@@ -144,7 +144,7 @@ fun ProjectScreen(id: String, nav: Nav) {
                             )
                         }
                     }
-                    if (manage && auth.me != null) {
+                    if (manage && auth.me != null && project.secret != true) {
                         if (canEdit) HorizontalDivider(color = DS.colors.border)
                         DropdownMenuItem(text = { Text("Поделиться…") }, leadingIcon = { Icon(Icons.Rounded.Share, null) }, onClick = { menu = false; sharing = true })
                     }

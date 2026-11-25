@@ -1,5 +1,6 @@
 package tj.jasurbek.projectlib
 
+import tj.jasurbek.projectlib.data.SecretLock
 import android.app.Application
 import coil3.ImageLoader
 import coil3.PlatformContext
@@ -24,6 +25,8 @@ class App : Application(), SingletonImageLoader.Factory {
         private set
     lateinit var auth: Auth
         private set
+    lateinit var secretLock: SecretLock
+        private set
 
     /** A pairing link (projectlib://pair?server=…&code=…) opened from the QR code in the web profile. */
     val pendingPair = MutableStateFlow<Pair<String, String>?>(null)
@@ -47,11 +50,13 @@ class App : Application(), SingletonImageLoader.Factory {
         instance = this
         settings = Settings(this)
         api = Api(settings)
-        repo = Repository(this, settings, api)
+        secretLock = SecretLock(this)
+        repo = Repository(this, settings, api, secretLock)
         auth = Auth(settings, api, repo)
         // Who am I / roles may change on the server (admin changed my role): re-check whenever the app shows up.
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onStart(owner: LifecycleOwner) { auth.refresh() }
+            override fun onStart(owner: LifecycleOwner) { auth.refresh(); secretLock.onForeground() }
+            override fun onStop(owner: LifecycleOwner) { secretLock.onBackground() }
         })
     }
 

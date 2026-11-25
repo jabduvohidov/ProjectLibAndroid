@@ -66,7 +66,7 @@ import tj.jasurbek.projectlib.ui.launch.LocalLauncher
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun RunScreen(projectId: String, linkId: String, onBack: () -> Unit) {
-    val projects by App.instance.repo.projects.collectAsStateWithLifecycle()
+    val projects by App.instance.repo.shownProjects.collectAsStateWithLifecycle()
     val project = projects.find { it.id == projectId }
     val link = project?.links?.find { it.id == linkId }
     val launcher = LocalLauncher.current

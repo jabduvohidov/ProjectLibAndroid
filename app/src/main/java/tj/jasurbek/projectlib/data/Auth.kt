@@ -101,6 +101,7 @@ class Auth(private val settings: Settings, private val api: Api, private val rep
     suspend fun signOut() {
         if (settings.current.session.isNotEmpty()) runCatching { api.logout() }
         settings.clearCredentials()
+        tj.jasurbek.projectlib.App.instance.secretLock.lock()
         repo.clearLocalData()
         listOf("userId", "people", "status").forEach { settings.putCache(it, null) }
         repo.currentUserId = null

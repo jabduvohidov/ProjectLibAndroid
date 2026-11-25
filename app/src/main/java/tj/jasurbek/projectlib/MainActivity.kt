@@ -19,6 +19,12 @@ import tj.jasurbek.projectlib.ui.ProjectLibApp
 import tj.jasurbek.projectlib.ui.designsystem.AppTheme
 
 class MainActivity : ComponentActivity() {
+    /** Any touch counts as activity for the secret projects' idle lock. */
+    override fun dispatchTouchEvent(ev: android.view.MotionEvent): Boolean {
+        if (ev.actionMasked == android.view.MotionEvent.ACTION_DOWN) (application as App).secretLock.touch()
+        return super.dispatchTouchEvent(ev)
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handlePairLink(intent)

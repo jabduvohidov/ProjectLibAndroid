@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -208,6 +209,11 @@ fun ProjectFormSheet(initial: Project?, onDismiss: () -> Unit, onSubmit: (Projec
     val links = remember { mutableStateListOf<LinkDraft>().apply { initial?.links?.map { it.toDraft() }?.let(::addAll) } }
     var nameError by remember { mutableStateOf<String?>(null) }
     val linkErrors = remember { mutableStateMapOf<String, LinkErrors>() }
+    var secret by remember { mutableStateOf(initial?.secret == true) }
+    val unlocked by tj.jasurbek.projectlib.App.instance.secretLock.unlocked.collectAsState()
+    // Owner only; a shared project must stop being shared first; turning it on needs the lock open (else it just vanishes).
+    val own = initial == null || initial.isOwn
+    val shared = (initial?.shares?.size ?: 0) > 0
 
     FormSheet(
         title = if (initial != null) "Изменить проект" else "Новый проект",
@@ -225,7 +231,8 @@ fun ProjectFormSheet(initial: Project?, onDismiss: () -> Unit, onSubmit: (Projec
             }
             nameError = if (name.isBlank()) "Введите название" else null
             if (nameError != null || linkErrors.isNotEmpty()) return@submit false
-            onSubmit(ProjectInput(name.trim(), description.trim(), status, tags.split(",").map { it.trim() }.filter { it.isNotEmpty() }.distinct(), cleaned))
+            onSubmit(ProjectInput(name.trim(), description.trim(), status, tags.split(",").map { it.trim() }.filter { it.isNotEmpty() }.distinct(), cleaned,
+                secret = if (own && secret != (initial?.secret == true)) secret else null))
             true
         },
     ) {
@@ -238,6 +245,26 @@ fun ProjectFormSheet(initial: Project?, onDismiss: () -> Unit, onSubmit: (Projec
             }
         }
         DSTextField("Теги", tags, { tags = it }, placeholder = "react, mobile", hint = "Через запятую")
+        if (own) Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(DSSpace.md)) {
+            Column(Modifier.weight(1f)) {
+                Text("Секретный проект", style = MaterialTheme.typography.bodyLarge, color = DS.colors.textPrimary)
+                Text(
+                    when {
+                        shared -> "Сначала закройте общий доступ — секретным проектом нельзя делиться."
+                        !unlocked && !secret -> "Чтобы включить, откройте секретные проекты (замок на экране «Проекты»)."
+                        else -> "Виден только вам и только после пароля или отпечатка на устройстве. Администраторы его не видят."
+                    },
+                    style = MaterialTheme.typography.bodySmall, color = DS.colors.textSecondary,
+                )
+            }
+            androidx.compose.material3.Switch(
+                checked = secret, onCheckedChange = { secret = it }, enabled = !shared && (unlocked || secret),
+                colors = androidx.compose.material3.SwitchDefaults.colors(
+                    checkedTrackColor = DS.colors.accent, checkedThumbColor = DS.colors.textOnAccent,
+                    uncheckedTrackColor = DS.colors.fill, uncheckedThumbColor = DS.colors.surfaceRaised, uncheckedBorderColor = DS.colors.borderStrong,
+                ),
+            )
+        }
 
         Column(verticalArrangement = Arrangement.spacedBy(DSSpace.md)) {
             Text("Приложения и ссылки", style = MaterialTheme.typography.labelLarge, color = DS.colors.textSecondary)

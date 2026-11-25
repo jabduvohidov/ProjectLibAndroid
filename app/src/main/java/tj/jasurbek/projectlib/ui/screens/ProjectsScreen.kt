@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.CreateNewFolder
 import androidx.compose.material.icons.rounded.Group
@@ -85,7 +86,7 @@ fun AccentFab(text: String, icon: androidx.compose.ui.graphics.vector.ImageVecto
 @Composable
 fun ProjectsScreen(nav: Nav) {
     val repo = App.instance.repo
-    val projects by repo.projects.collectAsStateWithLifecycle()
+    val projects by repo.shownProjects.collectAsStateWithLifecycle()
     val sync by repo.status.collectAsStateWithLifecycle()
     val toast = LocalToast.current
     var query by rememberSaveable { mutableStateOf("") }
@@ -106,6 +107,7 @@ fun ProjectsScreen(nav: Nav) {
     AppScreen(
         title = "Проекты", nav = nav, subtitle = "${projects.size} в библиотеке",
         fab = { if (canCreate) AccentFab("Новый проект") { creating = true } },
+        actions = { if (canCreate) tj.jasurbek.projectlib.ui.common.SecretLockAction() },
     ) {
         when {
             projects.isEmpty() && !sync.everSynced && sync.state == SyncState.Syncing -> items(3) { SkeletonCard() }
@@ -185,6 +187,7 @@ fun ProjectCard(p: Project, onOpen: () -> Unit) {
     DSCard(onClick = onOpen) {
         Column(verticalArrangement = Arrangement.spacedBy(DSSpace.md)) {
             Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(DSSpace.md)) {
+                if (p.secret == true) Icon(Icons.Rounded.Lock, "Секретный", tint = DS.colors.textTertiary, modifier = Modifier.padding(top = 3.dp).size(16.dp))
                 Text(p.name, style = MaterialTheme.typography.titleMedium, color = DS.colors.textPrimary, maxLines = 2,
                     overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
                 ProjectStatusBadge(p.status)

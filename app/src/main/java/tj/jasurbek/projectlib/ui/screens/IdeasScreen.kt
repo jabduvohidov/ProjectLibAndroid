@@ -45,7 +45,7 @@ private data class Target(val projectId: String, val idea: Idea)
 fun IdeasScreen(nav: Nav) {
     val app = App.instance
     val repo = app.repo
-    val projects by repo.projects.collectAsStateWithLifecycle()
+    val projects by repo.shownProjects.collectAsStateWithLifecycle()
     val settings by app.settings.state.collectAsStateWithLifecycle()
     val toast = LocalToast.current
     var filter by remember { mutableStateOf(IdeaFilter.Open) }

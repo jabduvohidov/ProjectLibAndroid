@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -63,7 +64,7 @@ fun uid(): String = buildString { repeat(20) { append(ID_CHARS[random.nextInt(ID
  *
  * All state changes happen on the main thread; network and disk work run on IO.
  */
-class Repository(context: Context, private val settings: Settings, val api: Api) {
+class Repository(context: Context, private val settings: Settings, val api: Api, secretLock: SecretLock) {
     @Serializable
     private data class Persisted(val base: List<Project> = emptyList(), val outbox: List<Op> = emptyList(), val lastRev: Long = 0)
 
@@ -73,6 +74,9 @@ class Repository(context: Context, private val settings: Settings, val api: Api)
 
     private val _projects = MutableStateFlow(applyOps(persisted.base, persisted.outbox))
     val projects: StateFlow<List<Project>> = _projects.asStateFlow()
+    /** What the screens list: secret projects only while unlocked on this device. */
+    val shownProjects: StateFlow<List<Project>> = kotlinx.coroutines.flow.combine(_projects, secretLock.unlocked, SecretLock::visible)
+        .stateIn(scope, kotlinx.coroutines.flow.SharingStarted.Eagerly, SecretLock.visible(_projects.value, false))
 
     private val _status = MutableStateFlow(
         SyncStatus(if (api.configured) SyncState.Syncing else SyncState.NotConfigured, persisted.outbox.size, persisted.lastRev > 0)
@@ -131,7 +135,11 @@ class Repository(context: Context, private val settings: Settings, val api: Api)
         scheduleSync(400)
     }
 
-    data class ProjectInput(val name: String, val description: String, val status: ProjectStatus, val tags: List<String>, val links: List<Link>)
+    data class ProjectInput(
+        val name: String, val description: String, val status: ProjectStatus, val tags: List<String>, val links: List<Link>,
+        /** null = leave as is. */
+        val secret: Boolean? = null,
+    )
     data class IdeaInput(
         val title: String, val description: String, val status: String, val priority: Priority,
         val dueDate: String, val attachments: List<Attachment>, val order: Double? = null,
@@ -141,7 +149,7 @@ class Repository(context: Context, private val settings: Settings, val api: Api)
         val at = System.currentTimeMillis()
         val p = Project(
             uid(), input.name, input.description, input.status, input.tags, input.links, emptyList(), at, at,
-            ownerId = currentUserId, access = Access.Owner,
+            ownerId = currentUserId, access = Access.Owner, secret = input.secret?.takeIf { it },
         )
         enqueue(Op.ProjectPut(uid(), at, p))
         return p
@@ -149,7 +157,8 @@ class Repository(context: Context, private val settings: Settings, val api: Api)
 
     fun updateProject(id: String, input: ProjectInput) {
         val cur = project(id) ?: return
-        val next = cur.copy(name = input.name, description = input.description, status = input.status, tags = input.tags, links = input.links)
+        val next = cur.copy(name = input.name, description = input.description, status = input.status, tags = input.tags, links = input.links,
+            secret = input.secret ?: cur.secret)
         diffFields(cur.copy(ideas = emptyList()), next.copy(ideas = emptyList()), PROJECT_FIELDS)?.let {
             enqueue(Op.ProjectPatch(uid(), System.currentTimeMillis(), id, it))
         }
