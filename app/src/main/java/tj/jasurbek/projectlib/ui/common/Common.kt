@@ -345,3 +345,55 @@ fun GroupDivider() = HorizontalDivider(thickness = 1.dp, color = DS.colors.borde
 fun ScreenTitleSpacer() = Spacer(Modifier.width(0.dp))
 
 val ScreenPadding = PaddingValues(horizontal = DSSpace.lg)
+
+/** Linear-style priority glyph: "!" square for urgent, 3 bars filled by level, dashes for none. */
+@Composable
+fun PriorityIcon(priority: tj.jasurbek.projectlib.data.Priority, modifier: Modifier = Modifier) {
+    val c = DS.colors
+    val danger = toneColor(DSTone.Danger)
+    androidx.compose.foundation.Canvas(modifier.size(16.dp)) {
+        val u = size.width / 16f
+        fun bar(x: Float, y: Float, w: Float, h: Float, color: androidx.compose.ui.graphics.Color) = drawRoundRect(
+            color, androidx.compose.ui.geometry.Offset(x * u, y * u), androidx.compose.ui.geometry.Size(w * u, h * u),
+            androidx.compose.ui.geometry.CornerRadius(minOf(w, h) / 2 * u),
+        )
+        when (priority) {
+            tj.jasurbek.projectlib.data.Priority.Urgent -> {
+                drawRoundRect(danger, androidx.compose.ui.geometry.Offset(u, u), androidx.compose.ui.geometry.Size(14 * u, 14 * u), androidx.compose.ui.geometry.CornerRadius(3 * u))
+                bar(7f, 4f, 2f, 5f, androidx.compose.ui.graphics.Color.White); bar(7f, 10.5f, 2f, 2f, androidx.compose.ui.graphics.Color.White)
+            }
+            tj.jasurbek.projectlib.data.Priority.None -> listOf(2f, 6.5f, 11f).forEach { bar(it, 7.25f, 3f, 1.5f, c.textTertiary) }
+            else -> repeat(3) { i -> bar(2f + i * 4.5f, 10f - i * 3.5f, 3f, 4f + i * 3.5f,
+                c.textSecondary.copy(alpha = if (i < priority.rank) 1f else 0.3f)) }
+        }
+    }
+}
+
+/** One-tap priority switcher; without [onChange] (read-only project) it is just the icon. */
+@Composable
+fun PriorityPicker(priority: tj.jasurbek.projectlib.data.Priority, withLabel: Boolean = false, onChange: ((tj.jasurbek.projectlib.data.Priority) -> Unit)?) {
+    var open by remember { mutableStateOf(false) }
+    Box {
+        Row(
+            Modifier.clip(MaterialTheme.shapes.small)
+                .then(if (onChange != null) Modifier.clickable { open = true } else Modifier)
+                .semantics { contentDescription = if (onChange != null) "Приоритет: ${priority.label}. Изменить" else "Приоритет: ${priority.label}" }
+                .heightIn(min = 28.dp).padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            PriorityIcon(priority)
+            if (withLabel && priority != tj.jasurbek.projectlib.data.Priority.None)
+                Text(priority.label, style = MaterialTheme.typography.labelMedium, color = DS.colors.textSecondary)
+        }
+        if (onChange != null) GlassDropdown(expanded = open, onDismissRequest = { open = false }, shape = MaterialTheme.shapes.medium) {
+            tj.jasurbek.projectlib.data.Priority.entries.forEach { p ->
+                DropdownMenuItem(
+                    text = { Text(p.label) },
+                    leadingIcon = { PriorityIcon(p) },
+                    trailingIcon = if (p == priority) ({ Icon(Icons.Rounded.Check, null, tint = DS.colors.accentText) }) else null,
+                    onClick = { open = false; onChange(p) },
+                )
+            }
+        }
+    }
+}

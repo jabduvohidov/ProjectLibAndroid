@@ -71,10 +71,13 @@ val DEFAULT_STATUSES = listOf(
 fun List<StatusDef>.of(id: String): StatusDef = firstOrNull { it.id == id } ?: first()
 
 @Serializable
-enum class Priority(val label: String, val tone: DSTone) {
-    @SerialName("low") Low("Низкий", DSTone.Neutral),
-    @SerialName("medium") Medium("Средний", DSTone.Info),
-    @SerialName("high") High("Высокий", DSTone.Danger),
+enum class Priority(val label: String, val tone: DSTone, val rank: Int) {
+    // Most to least urgent (menu order); rank drives board sorting. Mirrors PRIORITY in web types.ts.
+    @SerialName("urgent") Urgent("Срочный", DSTone.Danger, 4),
+    @SerialName("high") High("Высокий", DSTone.Warning, 3),
+    @SerialName("medium") Medium("Средний", DSTone.Info, 2),
+    @SerialName("low") Low("Низкий", DSTone.Neutral, 1),
+    @SerialName("none") None("Без приоритета", DSTone.Neutral, 0),
 }
 
 @Serializable
@@ -167,7 +170,7 @@ data class Idea(
     val description: String = "",
     /** Column id in the project's [Project.columns]. */
     val status: String = IdeaStatus.New,
-    val priority: Priority = Priority.Medium,
+    val priority: Priority = Priority.None,
     /** Deadline as a local calendar date "YYYY-MM-DD"; null / "" = none. */
     val dueDate: String? = null,
     /** Manual position inside its status column (smaller = higher). null = by creation time. */
@@ -226,6 +229,8 @@ fun Project.progress(): Progress {
 fun Idea.isOpenIn(columns: List<StatusDef>) = !columns.of(status).isClosed
 
 val byIdeaOrder = compareBy<Idea> { it.sortOrder }
+/** Board columns: most urgent first, then the manual (drag) order. */
+val byPriorityThenOrder = compareByDescending<Idea> { it.priority.rank }.thenBy { it.sortOrder }
 
 fun todayISO(): String = LocalDate.now().toString()
 fun addDaysISO(days: Long): String = LocalDate.now().plusDays(days).toString()

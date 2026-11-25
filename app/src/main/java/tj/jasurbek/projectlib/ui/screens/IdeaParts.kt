@@ -194,7 +194,8 @@ fun IdeaRow(
                 if (readOnly) DSBadge(col.label, col.dsTone, dot = true)
                 else IdeaStatusPicker(columns, idea.status) { s -> App.instance.repo.updateIdea(projectId, idea.id) { it.copy(status = s) } }
                 DueBadge(idea, columns)
-                if (idea.priority != Priority.Medium) DSBadge("${idea.priority.label} приоритет", idea.priority.tone)
+                tj.jasurbek.projectlib.ui.common.PriorityPicker(idea.priority, withLabel = true,
+                    onChange = if (readOnly) null else { p -> App.instance.repo.updateIdea(projectId, idea.id) { it.copy(priority = p) } })
                 if (showAuthor) {
                     val changed = idea.updatedBy != null && idea.updatedBy != idea.createdBy
                     PersonChip(idea.updatedBy ?: idea.createdBy, if (changed) "изменил(а)" else "добавил(а)")

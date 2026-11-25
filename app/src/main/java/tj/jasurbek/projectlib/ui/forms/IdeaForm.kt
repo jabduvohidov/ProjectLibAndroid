@@ -66,7 +66,7 @@ fun IdeaFormSheet(
     var title by remember { mutableStateOf(initial?.title ?: "") }
     var description by remember { mutableStateOf(initial?.description ?: "") }
     var status by remember { mutableStateOf(initial?.let { columns.of(it.status).id } ?: defaultStatus ?: columns.first().id) }
-    var priority by remember { mutableStateOf(initial?.priority ?: Priority.Medium) }
+    var priority by remember { mutableStateOf(initial?.priority ?: Priority.None) }
     var dueDate by remember { mutableStateOf(initial?.dueDate ?: "") }
     var attachments by remember { mutableStateOf<List<Attachment>>(initial?.attachments ?: emptyList()) }
     var error by remember { mutableStateOf<String?>(null) }

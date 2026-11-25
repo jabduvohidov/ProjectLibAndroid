@@ -71,7 +71,8 @@ import tj.jasurbek.projectlib.data.of
 import tj.jasurbek.projectlib.ui.common.LocalToast
 import tj.jasurbek.projectlib.ui.designsystem.DSTone
 import tj.jasurbek.projectlib.data.Priority
-import tj.jasurbek.projectlib.data.byIdeaOrder
+import tj.jasurbek.projectlib.data.byPriorityThenOrder
+import tj.jasurbek.projectlib.ui.common.PriorityPicker
 import tj.jasurbek.projectlib.data.dueState
 import tj.jasurbek.projectlib.ui.common.DueBadge
 import tj.jasurbek.projectlib.ui.common.StatusDot
@@ -134,7 +135,7 @@ fun IdeaBoard(items: List<BoardItem>, spec: BoardSpec, onEdit: (BoardItem) -> Un
     val keys = spec.columns.map { it.key }.toSet()
     val columns = spec.columns.associate { c ->
         c.key to items.filter { val k = spec.keyOf(it); k == c.key || (k !in keys && c == spec.columns.first()) }
-            .sortedWith(compareBy(byIdeaOrder) { it.idea })
+            .sortedWith(compareBy(byPriorityThenOrder) { it.idea })
     }
     // Card positions in root coordinates, to find where between the cards a drop lands.
     val cardBounds = remember { mutableStateMapOf<String, ClosedFloatingPointRange<Float>>() }
@@ -149,7 +150,11 @@ fun IdeaBoard(items: List<BoardItem>, spec: BoardSpec, onEdit: (BoardItem) -> Un
         val target = columns.getValue(to).filter { it.idea.id != id }
         val index = if (dropY == null) target.size
         else target.indexOfFirst { t -> cardBounds[t.idea.id]?.let { dropY < (it.start + it.endInclusive) / 2 } ?: false }.let { if (it < 0) target.size else it }
-        val order = between(target.getOrNull(index - 1)?.idea?.sortOrder, target.getOrNull(index)?.idea?.sortOrder)
+        // Columns sort by priority first, so only neighbours of the same priority define the manual position.
+        val same = { t: BoardItem? -> t?.takeIf { it.idea.priority.rank == item.idea.priority.rank } }
+        val prev = if (dropY == null) target.lastOrNull { same(it) != null } else same(target.getOrNull(index - 1))
+        val next = if (dropY == null) null else same(target.getOrNull(index))
+        val order = if (prev == null && next == null) item.idea.sortOrder else between(prev?.idea?.sortOrder, next?.idea?.sortOrder)
         repo.updateIdea(item.projectId, id) { it.copy(status = status, order = order) }
     }
 
@@ -347,11 +352,11 @@ private fun BoardCard(item: BoardItem, others: List<BoardCol>, onClick: () -> Un
         if (item.projectName != null) Text(item.projectName, style = MaterialTheme.typography.labelMedium, color = DS.colors.accentText, maxLines = 1, overflow = TextOverflow.Ellipsis)
         Text(idea.title, style = MaterialTheme.typography.bodyMedium, color = DS.colors.textPrimary, maxLines = 4, overflow = TextOverflow.Ellipsis)
         val atts = idea.attachments?.size ?: 0
-        if (idea.dueState(item.columns) != null || idea.priority != Priority.Medium || atts > 0) {
+        if (idea.dueState(item.columns) != null || idea.priority != Priority.None || !item.readOnly || atts > 0) {
             FlowRow(Modifier.padding(top = DSSpace.xs), horizontalArrangement = Arrangement.spacedBy(DSSpace.xs), verticalArrangement = Arrangement.spacedBy(DSSpace.xs),
                 itemVerticalAlignment = Alignment.CenterVertically) {
+                PriorityPicker(idea.priority, onChange = if (item.readOnly) null else { p -> App.instance.repo.updateIdea(item.projectId, idea.id) { it.copy(priority = p) } })
                 DueBadge(idea, item.columns)
-                if (idea.priority != Priority.Medium) DSBadge(idea.priority.label, idea.priority.tone)
                 if (atts > 0) Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Rounded.AttachFile, "Вложения", tint = DS.colors.textTertiary, modifier = Modifier.size(14.dp))
                     Text("$atts", style = MaterialTheme.typography.labelMedium, color = DS.colors.textTertiary)
